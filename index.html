@@ -285,6 +285,50 @@
       background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%);
     }
 
+    /* ALBUM 2 — Different Not Less */
+    .album-cover-dnl {
+      width: 280px;
+      height: 280px;
+      border-radius: 8px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 50px rgba(100,60,200,0.18);
+      background:
+        radial-gradient(ellipse at 15% 60%, rgba(140,0,255,0.4) 0%, transparent 45%),
+        radial-gradient(ellipse at 45% 35%, rgba(0,140,255,0.38) 0%, transparent 42%),
+        radial-gradient(ellipse at 78% 55%, rgba(0,210,140,0.32) 0%, transparent 45%),
+        radial-gradient(ellipse at 55% 78%, rgba(220,100,0,0.3) 0%, transparent 40%),
+        linear-gradient(to bottom, #020008 0%, #07001a 45%, #040010 100%);
+    }
+
+    .album-cover-dnl::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: 0;
+      background-image:
+        radial-gradient(1px 1px at 15% 10%, rgba(255,255,255,0.8) 0%, transparent 100%),
+        radial-gradient(1px 1px at 35% 5%,  rgba(255,255,255,0.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 60% 15%, rgba(255,255,255,0.7) 0%, transparent 100%),
+        radial-gradient(1px 1px at 82% 8%,  rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 8%  22%, rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 92% 18%, rgba(255,255,255,0.6) 0%, transparent 100%),
+        radial-gradient(2px 2px at 50% 3%,  rgba(255,255,255,0.9) 0%, transparent 100%),
+        radial-gradient(1px 1px at 25% 28%, rgba(200,180,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 72% 25%, rgba(180,220,255,0.4) 0%, transparent 100%),
+        linear-gradient(165deg, transparent 20%, rgba(80,0,200,0.15) 30%, rgba(0,100,220,0.18) 40%, rgba(0,180,120,0.14) 50%, transparent 60%),
+        linear-gradient(160deg, transparent 30%, rgba(100,0,180,0.12) 42%, rgba(60,200,160,0.1) 55%, transparent 65%);
+    }
+
+    .album-cover-dnl::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 55px;
+      background: linear-gradient(to top, rgba(2,0,10,0.95) 0%, transparent 100%);
+      z-index: 1;
+    }
+
     .album-cover-label-title {
       font-size: 1em;
       font-weight: bold;
@@ -691,6 +735,7 @@
       .stat-number { font-size: 1.5em; }
       .album-section { flex-direction: column; align-items: center; gap: 30px; }
       .album-cover-art { width: 220px; height: 220px; }
+      .album-cover-dnl { width: 220px; height: 220px; }
       .tracklist-album-title { font-size: 1.5em; }
       .track-desc { display: none; }
       .track-plays { display: none; }
@@ -709,6 +754,7 @@
       .genre-tags { gap: 6px; }
       .tag { font-size: 0.7em; padding: 3px 10px; }
       .album-cover-art { width: 180px; height: 180px; }
+      .album-cover-dnl { width: 180px; height: 180px; }
     }
   </style>
 </head>
@@ -768,7 +814,7 @@
   </div>
 
   <div class="divider"></div>
-  <p class="section-title">Album</p>
+  <p class="section-title">Albums</p>
 
   <!-- ALBUM -->
   <div class="album-section">
@@ -865,6 +911,96 @@
 
   </div>
 
+  <div class="divider" style="margin: 30px auto;"></div>
+
+  <!-- ALBUM 2: Different Not Less -->
+  <div class="album-section">
+
+    <!-- COVER ART -->
+    <div class="album-cover-wrap">
+      <div class="album-cover-dnl">
+        <div class="album-cover-label">
+          <span class="album-cover-label-title">Different Not Less</span>
+          <span class="album-cover-label-artist">Bret Siers</span>
+        </div>
+      </div>
+      <div class="album-meta">
+        <div class="album-meta-info">2026 &nbsp;·&nbsp; 4 Tracks &nbsp;·&nbsp; AI Original</div>
+      </div>
+    </div>
+
+    <!-- TRACKLIST -->
+    <div class="tracklist">
+      <div class="tracklist-header">
+        <span class="tracklist-album-title">Different Not Less</span>
+        <span class="tracklist-album-sub">Bret Siers &nbsp;·&nbsp; 2026 &nbsp;·&nbsp; 4 tracks</span>
+      </div>
+
+      <div class="track-row" id="card-5" onclick="playTrack(4)">
+        <span class="track-num">01</span>
+        <div class="track-info">
+          <span class="track-title">Stars in the Sky</span>
+          <span class="track-desc">Look up. Your light belongs there too.</span>
+        </div>
+        <span class="track-plays" id="plays-5">0 plays</span>
+        <span class="track-duration" id="duration-5">--:--</span>
+        <button class="track-play-btn" id="play-btn-5">&#9654;</button>
+        <button class="track-download-btn" onclick="event.stopPropagation(); downloadSong('Stars in the Sky.mp3', 'Stars in the Sky.mp3')" title="Download">&#11015;</button>
+      </div>
+      <audio id="audio-5" class="hidden-audio">
+        <source src="Stars in the Sky.mp3" type="audio/mpeg">
+      </audio>
+
+      <div class="track-row" id="card-6" onclick="playTrack(5)">
+        <span class="track-num">02</span>
+        <div class="track-info">
+          <span class="track-title">People</span>
+          <span class="track-desc">We're all just trying to find our place.</span>
+        </div>
+        <span class="track-plays" id="plays-6">0 plays</span>
+        <span class="track-duration" id="duration-6">--:--</span>
+        <button class="track-play-btn" id="play-btn-6">&#9654;</button>
+        <button class="track-download-btn" onclick="event.stopPropagation(); downloadSong('People.mp3', 'People.mp3')" title="Download">&#11015;</button>
+      </div>
+      <audio id="audio-6" class="hidden-audio">
+        <source src="People.mp3" type="audio/mpeg">
+      </audio>
+
+      <div class="track-row" id="card-7" onclick="playTrack(6)">
+        <span class="track-num">03</span>
+        <div class="track-info">
+          <span class="track-title">Hope in the Rain</span>
+          <span class="track-desc">Beauty hidden in the storm.</span>
+        </div>
+        <span class="track-plays" id="plays-7">0 plays</span>
+        <span class="track-duration" id="duration-7">--:--</span>
+        <button class="track-play-btn" id="play-btn-7">&#9654;</button>
+        <button class="track-download-btn" onclick="event.stopPropagation(); downloadSong('Hope in the Rain.mp3', 'Hope in the Rain.mp3')" title="Download">&#11015;</button>
+      </div>
+      <audio id="audio-7" class="hidden-audio">
+        <source src="Hope in the Rain.mp3" type="audio/mpeg">
+      </audio>
+
+      <div class="track-row" id="card-8" onclick="playTrack(7)">
+        <span class="track-num">04</span>
+        <div class="track-info">
+          <span class="track-title">Bucket List</span>
+          <span class="track-desc">Dream it. Chase it. Live it.</span>
+        </div>
+        <span class="track-plays" id="plays-8">0 plays</span>
+        <span class="track-duration" id="duration-8">--:--</span>
+        <button class="track-play-btn" id="play-btn-8">&#9654;</button>
+        <button class="track-download-btn" onclick="event.stopPropagation(); downloadSong('Bucket List.mp3', 'Bucket List.mp3')" title="Download">&#11015;</button>
+      </div>
+      <audio id="audio-8" class="hidden-audio">
+        <source src="Bucket List.mp3" type="audio/mpeg">
+      </audio>
+
+      <button class="play-all-btn" onclick="playTrack(4)">&#9654;&nbsp; Play All</button>
+    </div>
+
+  </div>
+
   <div class="divider"></div>
 
   <!-- MAILING LIST -->
@@ -894,7 +1030,7 @@
     <div class="sticky-player-info">
       <div>
         <div class="sticky-player-title" id="sticky-title">—</div>
-        <div class="sticky-player-artist">Bret Siers · Finding Home</div>
+        <div class="sticky-player-artist" id="sticky-album">Bret Siers · Finding Home</div>
       </div>
     </div>
     <div class="sticky-controls">
@@ -911,7 +1047,8 @@
 
   <script>
     const audios = document.querySelectorAll("audio.hidden-audio");
-    const songTitles = ["New Beginning", "Step Toward Home", "Day After Day", "Life Like Easter"];
+    const songTitles = ["New Beginning", "Step Toward Home", "Day After Day", "Life Like Easter", "Stars in the Sky", "People", "Hope in the Rain", "Bucket List"];
+    const songAlbums = ["Finding Home", "Finding Home", "Finding Home", "Finding Home", "Different Not Less", "Different Not Less", "Different Not Less", "Different Not Less"];
     let currentTrack = -1;
     let audioContext, analyser, vizBars = [];
 
@@ -936,7 +1073,7 @@
 
     // Play counts
     function getPlayCounts() {
-      return JSON.parse(localStorage.getItem("bretSiersPlayCounts") || '{"1":0,"2":0,"3":0,"4":0}');
+      return JSON.parse(localStorage.getItem("bretSiersPlayCounts") || '{"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0}');
     }
 
     function savePlayCounts(counts) {
@@ -946,9 +1083,10 @@
     function updatePlayCountDisplay() {
       const counts = getPlayCounts();
       let total = 0;
-      for (let i = 1; i <= 4; i++) {
-        document.getElementById("plays-" + i).textContent = counts[i] + " plays";
-        total += counts[i];
+      for (let i = 1; i <= 8; i++) {
+        const el = document.getElementById("plays-" + i);
+        if (el) el.textContent = (counts[i] || 0) + " plays";
+        total += (counts[i] || 0);
       }
       document.getElementById("total-plays").textContent = total;
     }
@@ -990,6 +1128,7 @@
         // Show sticky player
         document.getElementById("sticky-player").classList.add("visible");
         document.getElementById("sticky-title").textContent = songTitles[i];
+        document.getElementById("sticky-album").textContent = "Bret Siers · " + songAlbums[i];
         document.getElementById("sticky-play").innerHTML = "&#9646;&#9646;";
 
         setupVisualizer(audio);
