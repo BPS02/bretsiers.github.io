@@ -163,14 +163,6 @@
       text-align: center;
     }
 
-    .about-section h2 {
-      font-size: 1.6em;
-      color: #c0a060;
-      margin-bottom: 20px;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-    }
-
     .about-text {
       color: #999;
       font-size: 0.95em;
@@ -185,9 +177,7 @@
       margin-top: 25px;
     }
 
-    .stat {
-      text-align: center;
-    }
+    .stat { text-align: center; }
 
     .stat-number {
       font-size: 2em;
@@ -203,133 +193,282 @@
       margin-top: 4px;
     }
 
-    /* SONGS SECTION */
-    .songs-grid {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 30px;
+    /* ALBUM SECTION */
+    .album-section {
+      max-width: 900px;
+      margin: 0 auto;
       padding: 0 20px 60px;
-    }
-
-    .song-card {
-      background: rgba(10, 20, 35, 0.7);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 20px;
-      padding: 0;
-      text-align: center;
-      width: 340px;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 0 25px rgba(0,0,0,0.4);
-      transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
-      overflow: hidden;
-    }
-
-    .song-card:hover {
-      border-color: #c0a060;
-      box-shadow: 0 0 30px rgba(192, 160, 96, 0.15);
-      transform: translateY(-4px);
-    }
-
-    .song-card.playing {
-      border-color: #c0a060;
-      box-shadow: 0 0 35px rgba(192, 160, 96, 0.25);
-    }
-
-    /* ALBUM ART */
-    .album-art {
-      width: 100%;
-      height: 180px;
       display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 4em;
-      position: relative;
+      gap: 50px;
+      align-items: flex-start;
     }
 
-    .album-art-1 { background: linear-gradient(135deg, #1a0a2e, #16213e, #0f3460, #533483); }
-    .album-art-2 { background: linear-gradient(135deg, #0d1b2a, #1b263b, #415a77, #778da9); }
-    .album-art-3 { background: linear-gradient(135deg, #2d1b00, #462300, #6b3a00, #c0a060); }
+    /* ALBUM COVER ART */
+    .album-cover-wrap { flex-shrink: 0; }
 
-    .album-art-overlay {
+    .album-cover-art {
+      width: 280px;
+      height: 280px;
+      border-radius: 8px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 50px rgba(192,160,96,0.1);
+      background:
+        radial-gradient(ellipse at 50% 88%, rgba(255,140,60,0.5) 0%, rgba(190,70,110,0.22) 25%, transparent 52%),
+        linear-gradient(to bottom, #050a1a 0%, #0e0922 32%, #231040 58%, #3a1020 78%, #4a1808 100%);
+    }
+
+    /* Stars — predawn */
+    .album-cover-art::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: 0;
+      background-image:
+        radial-gradient(1px 1px at 20% 8%,  rgba(255,255,255,0.7) 0%, transparent 100%),
+        radial-gradient(1px 1px at 40% 4%,  rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 65% 13%, rgba(255,255,255,0.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 80% 6%,  rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 90% 16%, rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 55% 26%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 30% 34%, rgba(255,255,255,0.35) 0%, transparent 100%),
+        radial-gradient(1px 1px at 75% 30%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(2px 2px at 15% 3%,  rgba(255,255,255,0.85) 0%, transparent 100%),
+        radial-gradient(1px 1px at 85% 10%, rgba(255,220,200,0.55) 0%, transparent 100%),
+        radial-gradient(1px 1px at 50% 18%, rgba(255,255,255,0.35) 0%, transparent 100%),
+        radial-gradient(1px 1px at 5%  14%, rgba(255,255,255,0.45) 0%, transparent 100%),
+        radial-gradient(1px 1px at 95% 24%, rgba(255,255,255,0.3) 0%, transparent 100%);
+    }
+
+    /* Rolling hills */
+    .album-cover-art::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 80px;
+      background: linear-gradient(to bottom, #030a04, #040d05);
+      clip-path: polygon(0% 100%, 0% 68%, 16% 50%, 35% 65%, 50% 30%, 65% 65%, 84% 50%, 100% 65%, 100% 100%);
+      z-index: 1;
+    }
+
+    .easter-glow {
+      position: absolute;
+      bottom: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 110px;
+      height: 55px;
+      border-radius: 50%;
+      background: radial-gradient(ellipse, rgba(255,150,70,0.42) 0%, rgba(200,80,120,0.18) 45%, transparent 70%);
+      filter: blur(10px);
+      z-index: 2;
+    }
+
+    .bunny-svg {
+      position: absolute;
+      bottom: 44px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 68px;
+      height: 84px;
+      z-index: 3;
+      filter: drop-shadow(0 0 6px rgba(255,140,80,0.5)) drop-shadow(0 0 18px rgba(200,80,120,0.3));
+    }
+
+    .album-cover-label {
       position: absolute;
       bottom: 0;
       left: 0;
       right: 0;
-      height: 60px;
-      background: linear-gradient(to top, rgba(10, 20, 35, 0.9), transparent);
+      padding: 14px 16px;
+      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%);
     }
 
-    .song-card-content {
-      padding: 20px 30px 30px;
+    .album-cover-label-title {
+      font-size: 1em;
+      font-weight: bold;
+      color: #c0a060;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      display: block;
     }
 
-    .now-playing-badge {
-      display: none;
+    .album-cover-label-artist {
+      font-size: 0.72em;
+      color: #aaa;
+      letter-spacing: 1px;
+      display: block;
+      margin-top: 2px;
+    }
+
+    .album-meta {
+      margin-top: 14px;
+      text-align: center;
+    }
+
+    .album-meta-info {
+      font-size: 0.75em;
+      color: #555;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    /* TRACKLIST */
+    .tracklist { flex: 1; min-width: 0; }
+
+    .tracklist-header {
+      margin-bottom: 8px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .tracklist-album-title {
+      font-size: 2em;
+      font-weight: bold;
+      color: #c0a060;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      display: block;
+    }
+
+    .tracklist-album-sub {
+      font-size: 0.78em;
+      color: #555;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-top: 6px;
+      display: block;
+    }
+
+    .track-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 13px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.2s;
+      border: 1px solid transparent;
+      margin-top: 4px;
+    }
+
+    .track-row:hover { background: rgba(192,160,96,0.07); }
+
+    .track-row.playing {
+      background: rgba(192,160,96,0.1);
+      border-color: rgba(192,160,96,0.2);
+    }
+
+    .track-num {
+      font-size: 0.82em;
+      color: #444;
+      min-width: 22px;
+      text-align: center;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .track-row.playing .track-num { color: #c0a060; }
+
+    .track-info { flex: 1; min-width: 0; }
+
+    .track-title {
+      font-size: 0.98em;
+      font-weight: bold;
+      color: #ccc;
+      display: block;
+      letter-spacing: 0.5px;
+    }
+
+    .track-row.playing .track-title { color: #c0a060; }
+
+    .track-desc {
+      font-size: 0.75em;
+      color: #505050;
+      display: block;
+      margin-top: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .track-plays {
+      font-size: 0.72em;
+      color: #444;
+      letter-spacing: 1px;
+      min-width: 52px;
+      text-align: right;
+    }
+
+    .track-duration {
+      font-size: 0.78em;
+      color: #505050;
+      min-width: 34px;
+      text-align: right;
+      letter-spacing: 1px;
+    }
+
+    .track-play-btn {
+      background: none;
+      border: 1px solid #2a2a2a;
+      color: #555;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      font-size: 0.75em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .track-play-btn:hover,
+    .track-row.playing .track-play-btn {
+      border-color: #c0a060;
+      color: #c0a060;
+      background: rgba(192,160,96,0.1);
+    }
+
+    .track-download-btn {
+      background: none;
+      border: none;
+      color: #383838;
+      font-size: 0.88em;
+      cursor: pointer;
+      padding: 4px 6px;
+      transition: color 0.2s;
+      flex-shrink: 0;
+    }
+
+    .track-download-btn:hover { color: #c0a060; }
+
+    audio.hidden-audio { display: none; }
+
+    .play-all-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 28px;
       background: #c0a060;
       color: #000;
-      font-size: 0.7em;
+      border: none;
+      border-radius: 25px;
+      font-size: 0.8em;
       font-weight: bold;
       letter-spacing: 2px;
       text-transform: uppercase;
-      padding: 3px 12px;
-      border-radius: 20px;
-      margin-bottom: 10px;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-family: 'Arial', sans-serif;
+      margin-top: 20px;
     }
 
-    .song-card.playing .now-playing-badge { display: inline-block; }
+    .play-all-btn:hover { background: #d4b06a; }
 
-    .song-title {
-      font-size: 1.4em;
-      font-weight: bold;
-      color: #c0a060;
-      margin-bottom: 5px;
-      letter-spacing: 1px;
-    }
-
-    .song-meta {
-      font-size: 0.8em;
-      color: #666;
-      margin-bottom: 6px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .song-stats {
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      margin-bottom: 10px;
-    }
-
-    .song-stat {
-      font-size: 0.75em;
-      color: #555;
-      letter-spacing: 1px;
-    }
-
-    .song-description {
-      font-size: 0.88em;
-      color: #888;
-      margin-bottom: 16px;
-      line-height: 1.5;
-    }
-
-    audio {
-      width: 100%;
-      outline: none;
-      filter: invert(1) hue-rotate(180deg);
-      border-radius: 30px;
-    }
-
-    .card-actions {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-top: 14px;
-      flex-wrap: wrap;
-    }
-
+    /* ACTION BUTTONS (kept for non-song uses) */
     .action-btn {
       display: inline-block;
       padding: 8px 20px;
@@ -347,25 +486,7 @@
       font-family: 'Arial', sans-serif;
     }
 
-    .action-btn:hover {
-      background: #c0a060;
-      color: #000;
-    }
-
-    .action-btn.favorited {
-      background: #c0a060;
-      color: #000;
-    }
-
-    .youtube-link {
-      border-color: #ff4444;
-      color: #ff4444;
-    }
-
-    .youtube-link:hover {
-      background: #ff4444;
-      color: #fff;
-    }
+    .action-btn:hover { background: #c0a060; color: #000; }
 
     /* MAILING LIST */
     .mailing-section {
@@ -400,9 +521,7 @@
       transition: border-color 0.3s;
     }
 
-    .mailing-form input:focus {
-      border-color: #c0a060;
-    }
+    .mailing-form input:focus { border-color: #c0a060; }
 
     .mailing-form button {
       padding: 12px 28px;
@@ -419,9 +538,7 @@
       font-family: 'Arial', sans-serif;
     }
 
-    .mailing-form button:hover {
-      background: #d4b06a;
-    }
+    .mailing-form button:hover { background: #d4b06a; }
 
     .mailing-success {
       display: none;
@@ -456,17 +573,12 @@
       transition: background 0.3s, color 0.3s;
     }
 
-    .contact-btn:hover {
-      background: #c0a060;
-      color: #000;
-    }
+    .contact-btn:hover { background: #c0a060; color: #000; }
 
     /* STICKY PLAYER BAR */
     .sticky-player {
       position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
+      bottom: 0; left: 0; right: 0;
       background: rgba(8, 16, 28, 0.95);
       border-top: 1px solid rgba(255,255,255,0.1);
       backdrop-filter: blur(10px);
@@ -495,23 +607,15 @@
       letter-spacing: 1px;
     }
 
-    .sticky-player-artist {
-      color: #666;
-      font-size: 0.75em;
-    }
+    .sticky-player-artist { color: #666; font-size: 0.75em; }
 
-    .sticky-controls {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+    .sticky-controls { display: flex; align-items: center; gap: 12px; }
 
     .sticky-btn {
       background: none;
       border: 1px solid #c0a060;
       color: #c0a060;
-      width: 36px;
-      height: 36px;
+      width: 36px; height: 36px;
       border-radius: 50%;
       font-size: 1em;
       cursor: pointer;
@@ -521,14 +625,10 @@
       transition: background 0.2s, color 0.2s;
     }
 
-    .sticky-btn:hover {
-      background: #c0a060;
-      color: #000;
-    }
+    .sticky-btn:hover { background: #c0a060; color: #000; }
 
     .sticky-progress {
-      width: 200px;
-      height: 4px;
+      width: 200px; height: 4px;
       background: #333;
       border-radius: 4px;
       overflow: hidden;
@@ -587,10 +687,13 @@
     @media (max-width: 768px) {
       header h1 { font-size: 1.8em; letter-spacing: 2px; }
       .artist-bio { font-size: 0.9em; }
-      .songs-grid { gap: 20px; padding: 0 15px 40px; }
-      .song-card { width: 100%; max-width: 400px; }
       .about-stats { gap: 20px; }
       .stat-number { font-size: 1.5em; }
+      .album-section { flex-direction: column; align-items: center; gap: 30px; }
+      .album-cover-art { width: 220px; height: 220px; }
+      .tracklist-album-title { font-size: 1.5em; }
+      .track-desc { display: none; }
+      .track-plays { display: none; }
       .mailing-form { flex-direction: column; align-items: center; }
       .mailing-form input { width: 100%; max-width: 300px; }
       .sticky-player { flex-wrap: wrap; gap: 8px; padding: 10px 15px; }
@@ -605,9 +708,7 @@
       header h1 { font-size: 1.4em; }
       .genre-tags { gap: 6px; }
       .tag { font-size: 0.7em; padding: 3px 10px; }
-      .song-card-content { padding: 15px 20px 25px; }
-      .card-actions { gap: 6px; }
-      .action-btn { padding: 6px 14px; font-size: 0.7em; }
+      .album-cover-art { width: 180px; height: 180px; }
     }
   </style>
 </head>
@@ -652,8 +753,8 @@
     </p>
     <div class="about-stats">
       <div class="stat">
-        <div class="stat-number">4</div>
-        <div class="stat-label">Tracks</div>
+        <div class="stat-number">1</div>
+        <div class="stat-label">Album</div>
       </div>
       <div class="stat">
         <div class="stat-number">2026</div>
@@ -667,113 +768,99 @@
   </div>
 
   <div class="divider"></div>
-  <p class="section-title">Latest Tracks</p>
+  <p class="section-title">Album</p>
 
-  <!-- SONGS -->
-  <div class="songs-grid">
+  <!-- ALBUM -->
+  <div class="album-section">
 
-    <div class="song-card" id="card-1">
-      <div class="album-art album-art-1">
-        <span>🎵</span>
-        <div class="album-art-overlay"></div>
+    <!-- COVER ART -->
+    <div class="album-cover-wrap">
+      <div class="album-cover-art">
+        <div class="easter-glow"></div>
+        <svg class="bunny-svg" viewBox="0 0 80 105" xmlns="http://www.w3.org/2000/svg" fill="rgba(3,7,18,0.95)">
+          <ellipse cx="27" cy="28" rx="8" ry="23" transform="rotate(-12, 27, 28)"/>
+          <ellipse cx="53" cy="28" rx="8" ry="23" transform="rotate(12, 53, 28)"/>
+          <circle cx="40" cy="60" r="17"/>
+          <ellipse cx="40" cy="85" rx="26" ry="21"/>
+        </svg>
+        <div class="album-cover-label">
+          <span class="album-cover-label-title">Finding Home</span>
+          <span class="album-cover-label-artist">Bret Siers</span>
+        </div>
       </div>
-      <div class="song-card-content">
-        <div class="now-playing-badge">Now Playing</div>
-        <div class="song-title">New Beginning</div>
-        <div class="song-meta">AI Original &nbsp;·&nbsp; 2026</div>
-        <div class="song-stats">
-          <span class="song-stat" id="duration-1">--:--</span>
-          <span class="song-stat">·</span>
-          <span class="song-stat" id="plays-1">0 plays</span>
-        </div>
-        <p class="song-description">A fresh start. A hopeful sound. This track captures the feeling of stepping forward into something new.</p>
-        <audio id="audio-1" controls>
-          <source src="New Beginning.mp3" type="audio/mpeg">
-        </audio>
-        <div class="card-actions">
-          <button class="action-btn" onclick="downloadSong('New Beginning.mp3', 'New Beginning.mp3')">&#11015; Download</button>
-          <button class="action-btn" onclick="toggleFavorite(1, this)">&#9825; Favorite</button>
-          <a class="action-btn youtube-link" href="https://www.youtube.com/@bpmav" target="_blank">&#9654; YouTube</a>
-        </div>
+      <div class="album-meta">
+        <div class="album-meta-info">2026 &nbsp;·&nbsp; 4 Tracks &nbsp;·&nbsp; AI Original</div>
       </div>
     </div>
 
-    <div class="song-card" id="card-2">
-      <div class="album-art album-art-2">
-        <span>🎵</span>
-        <div class="album-art-overlay"></div>
+    <!-- TRACKLIST -->
+    <div class="tracklist">
+      <div class="tracklist-header">
+        <span class="tracklist-album-title">Finding Home</span>
+        <span class="tracklist-album-sub">Bret Siers &nbsp;·&nbsp; 2026 &nbsp;·&nbsp; 4 tracks</span>
       </div>
-      <div class="song-card-content">
-        <div class="now-playing-badge">Now Playing</div>
-        <div class="song-title">Step Toward Home</div>
-        <div class="song-meta">AI Original &nbsp;·&nbsp; 2026</div>
-        <div class="song-stats">
-          <span class="song-stat" id="duration-2">--:--</span>
-          <span class="song-stat">·</span>
-          <span class="song-stat" id="plays-2">0 plays</span>
-        </div>
-        <p class="song-description">A journey back to where the heart belongs. Every step carries purpose, warmth, and the promise of belonging.</p>
-        <audio id="audio-2" controls>
-          <source src="Step Toward Home.mp3" type="audio/mpeg">
-        </audio>
-        <div class="card-actions">
-          <button class="action-btn" onclick="downloadSong('Step Toward Home.mp3', 'Step Toward Home.mp3')">&#11015; Download</button>
-          <button class="action-btn" onclick="toggleFavorite(2, this)">&#9825; Favorite</button>
-          <a class="action-btn youtube-link" href="https://www.youtube.com/@bpmav" target="_blank">&#9654; YouTube</a>
-        </div>
-      </div>
-    </div>
 
-    <div class="song-card" id="card-3">
-      <div class="album-art album-art-3">
-        <span>🎵</span>
-        <div class="album-art-overlay"></div>
-      </div>
-      <div class="song-card-content">
-        <div class="now-playing-badge">Now Playing</div>
-        <div class="song-title">Day After Day</div>
-        <div class="song-meta">AI Original &nbsp;·&nbsp; 2026</div>
-        <div class="song-stats">
-          <span class="song-stat" id="duration-3">--:--</span>
-          <span class="song-stat">·</span>
-          <span class="song-stat" id="plays-3">0 plays</span>
+      <div class="track-row" id="card-1" onclick="playTrack(0)">
+        <span class="track-num">01</span>
+        <div class="track-info">
+          <span class="track-title">New Beginning</span>
+          <span class="track-desc">A fresh start. A hopeful sound.</span>
         </div>
-        <p class="song-description">A steady rhythm through the passing of time. Each day builds on the last, carrying hope forward.</p>
-        <audio id="audio-3" controls>
-          <source src="Day After Day.mp3" type="audio/mpeg">
-        </audio>
-        <div class="card-actions">
-          <button class="action-btn" onclick="downloadSong('Day After Day.mp3', 'Day After Day.mp3')">&#11015; Download</button>
-          <button class="action-btn" onclick="toggleFavorite(3, this)">&#9825; Favorite</button>
-          <a class="action-btn youtube-link" href="https://www.youtube.com/@bpmav" target="_blank">&#9654; YouTube</a>
-        </div>
+        <span class="track-plays" id="plays-1">0 plays</span>
+        <span class="track-duration" id="duration-1">--:--</span>
+        <button class="track-play-btn" id="play-btn-1">&#9654;</button>
+        <button class="track-download-btn" onclick="event.stopPropagation(); downloadSong('New Beginning.mp3', 'New Beginning.mp3')" title="Download">&#11015;</button>
       </div>
-    </div>
+      <audio id="audio-1" class="hidden-audio">
+        <source src="New Beginning.mp3" type="audio/mpeg">
+      </audio>
 
-    <div class="song-card" id="card-4">
-      <div class="album-art album-art-1">
-        <span>🐣</span>
-        <div class="album-art-overlay"></div>
-      </div>
-      <div class="song-card-content">
-        <div class="now-playing-badge">Now Playing</div>
-        <div class="song-title">Life's the Easter</div>
-        <div class="song-meta">AI Original &nbsp;·&nbsp; 2026</div>
-        <div class="song-stats">
-          <span class="song-stat" id="duration-4">--:--</span>
-          <span class="song-stat">·</span>
-          <span class="song-stat" id="plays-4">0 plays</span>
+      <div class="track-row" id="card-2" onclick="playTrack(1)">
+        <span class="track-num">02</span>
+        <div class="track-info">
+          <span class="track-title">Step Toward Home</span>
+          <span class="track-desc">Every step carries purpose and warmth.</span>
         </div>
-        <p class="song-description">A celebration of life's surprises. Every moment is a gift waiting to be unwrapped.</p>
-        <audio id="audio-4" controls>
-          <source src="Life Like Easter.mp3" type="audio/mpeg">
-        </audio>
-        <div class="card-actions">
-          <button class="action-btn" onclick="downloadSong('Life Like Easter.mp3', 'Life Like Easter.mp3')">&#11015; Download</button>
-          <button class="action-btn" onclick="toggleFavorite(4, this)">&#9825; Favorite</button>
-          <a class="action-btn youtube-link" href="https://www.youtube.com/@bpmav" target="_blank">&#9654; YouTube</a>
-        </div>
+        <span class="track-plays" id="plays-2">0 plays</span>
+        <span class="track-duration" id="duration-2">--:--</span>
+        <button class="track-play-btn" id="play-btn-2">&#9654;</button>
+        <button class="track-download-btn" onclick="event.stopPropagation(); downloadSong('Step Toward Home.mp3', 'Step Toward Home.mp3')" title="Download">&#11015;</button>
       </div>
+      <audio id="audio-2" class="hidden-audio">
+        <source src="Step Toward Home.mp3" type="audio/mpeg">
+      </audio>
+
+      <div class="track-row" id="card-3" onclick="playTrack(2)">
+        <span class="track-num">03</span>
+        <div class="track-info">
+          <span class="track-title">Day After Day</span>
+          <span class="track-desc">Each day builds on the last, carrying hope forward.</span>
+        </div>
+        <span class="track-plays" id="plays-3">0 plays</span>
+        <span class="track-duration" id="duration-3">--:--</span>
+        <button class="track-play-btn" id="play-btn-3">&#9654;</button>
+        <button class="track-download-btn" onclick="event.stopPropagation(); downloadSong('Day After Day.mp3', 'Day After Day.mp3')" title="Download">&#11015;</button>
+      </div>
+      <audio id="audio-3" class="hidden-audio">
+        <source src="Day After Day.mp3" type="audio/mpeg">
+      </audio>
+
+      <div class="track-row" id="card-4" onclick="playTrack(3)">
+        <span class="track-num">04</span>
+        <div class="track-info">
+          <span class="track-title">Life Like Easter</span>
+          <span class="track-desc">A celebration of life's surprises.</span>
+        </div>
+        <span class="track-plays" id="plays-4">0 plays</span>
+        <span class="track-duration" id="duration-4">--:--</span>
+        <button class="track-play-btn" id="play-btn-4">&#9654;</button>
+        <button class="track-download-btn" onclick="event.stopPropagation(); downloadSong('Life Like Easter.mp3', 'Life Like Easter.mp3')" title="Download">&#11015;</button>
+      </div>
+      <audio id="audio-4" class="hidden-audio">
+        <source src="Life Like Easter.mp3" type="audio/mpeg">
+      </audio>
+
+      <button class="play-all-btn" onclick="playTrack(0)">&#9654;&nbsp; Play All</button>
     </div>
 
   </div>
@@ -807,13 +894,13 @@
     <div class="sticky-player-info">
       <div>
         <div class="sticky-player-title" id="sticky-title">—</div>
-        <div class="sticky-player-artist">Bret Siers</div>
+        <div class="sticky-player-artist">Bret Siers · Finding Home</div>
       </div>
     </div>
     <div class="sticky-controls">
-      <button class="sticky-btn" id="sticky-prev" onclick="prevTrack()">&#9664;</button>
+      <button class="sticky-btn" onclick="prevTrack()">&#9664;</button>
       <button class="sticky-btn" id="sticky-play" onclick="togglePlay()">&#9654;</button>
-      <button class="sticky-btn" id="sticky-next" onclick="nextTrack()">&#9654;</button>
+      <button class="sticky-btn" onclick="nextTrack()">&#9654;</button>
     </div>
     <div class="sticky-progress" id="sticky-progress" onclick="seekTrack(event)">
       <div class="sticky-progress-fill" id="sticky-progress-fill"></div>
@@ -823,10 +910,10 @@
   </div>
 
   <script>
-    const audios = document.querySelectorAll("audio");
-    const songTitles = ["New Beginning", "Step Toward Home", "Day After Day", "Life's the Easter"];
+    const audios = document.querySelectorAll("audio.hidden-audio");
+    const songTitles = ["New Beginning", "Step Toward Home", "Day After Day", "Life Like Easter"];
     let currentTrack = -1;
-    let audioContext, analyser, source, vizBars = [];
+    let audioContext, analyser, vizBars = [];
 
     // Create visualizer bars
     const vizContainer = document.getElementById("visualizer");
@@ -838,7 +925,16 @@
       vizBars.push(bar);
     }
 
-    // Load play counts from localStorage
+    // Play a track by index (toggle play/pause if already current)
+    function playTrack(index) {
+      if (currentTrack === index && !audios[index].paused) {
+        audios[index].pause();
+      } else {
+        audios[index].play();
+      }
+    }
+
+    // Play counts
     function getPlayCounts() {
       return JSON.parse(localStorage.getItem("bretSiersPlayCounts") || '{"1":0,"2":0,"3":0,"4":0}');
     }
@@ -857,37 +953,6 @@
       document.getElementById("total-plays").textContent = total;
     }
 
-    // Load favorites from localStorage
-    function getFavorites() {
-      return JSON.parse(localStorage.getItem("bretSiersFavorites") || "[]");
-    }
-
-    function toggleFavorite(id, btn) {
-      let favs = getFavorites();
-      if (favs.includes(id)) {
-        favs = favs.filter(f => f !== id);
-        btn.innerHTML = "&#9825; Favorite";
-        btn.classList.remove("favorited");
-      } else {
-        favs.push(id);
-        btn.innerHTML = "&#9829; Favorited";
-        btn.classList.add("favorited");
-      }
-      localStorage.setItem("bretSiersFavorites", JSON.stringify(favs));
-    }
-
-    // Restore favorites on load
-    function restoreFavorites() {
-      const favs = getFavorites();
-      document.querySelectorAll(".song-card").forEach((card, i) => {
-        if (favs.includes(i + 1)) {
-          const btn = card.querySelectorAll(".action-btn")[1];
-          btn.innerHTML = "&#9829; Favorited";
-          btn.classList.add("favorited");
-        }
-      });
-    }
-
     // Song duration display
     audios.forEach((audio, i) => {
       audio.addEventListener("loadedmetadata", () => {
@@ -897,17 +962,22 @@
       });
     });
 
-    // Highlight card + sticky player when song plays
+    // Audio events
     audios.forEach((audio, i) => {
       audio.addEventListener("play", () => {
         currentTrack = i;
+
+        // Update track rows
         audios.forEach((a, j) => {
-          const card = document.getElementById("card-" + (j + 1));
+          const row = document.getElementById("card-" + (j + 1));
+          const btn = document.getElementById("play-btn-" + (j + 1));
           if (i === j) {
-            card.classList.add("playing");
+            row.classList.add("playing");
+            btn.innerHTML = "&#9646;&#9646;";
           } else {
             a.pause();
-            card.classList.remove("playing");
+            row.classList.remove("playing");
+            btn.innerHTML = "&#9654;";
           }
         });
 
@@ -918,29 +988,26 @@
         updatePlayCountDisplay();
 
         // Show sticky player
-        const sticky = document.getElementById("sticky-player");
-        sticky.classList.add("visible");
+        document.getElementById("sticky-player").classList.add("visible");
         document.getElementById("sticky-title").textContent = songTitles[i];
         document.getElementById("sticky-play").innerHTML = "&#9646;&#9646;";
 
-        // Setup visualizer
         setupVisualizer(audio);
       });
 
       audio.addEventListener("pause", () => {
         document.getElementById("card-" + (i + 1)).classList.remove("playing");
+        document.getElementById("play-btn-" + (i + 1)).innerHTML = "&#9654;";
         document.getElementById("sticky-play").innerHTML = "&#9654;";
       });
 
       audio.addEventListener("timeupdate", () => {
-        if (currentTrack === i) {
-          updateStickyProgress(audio);
-        }
+        if (currentTrack === i) updateStickyProgress(audio);
       });
 
       audio.addEventListener("ended", () => {
         document.getElementById("card-" + (i + 1)).classList.remove("playing");
-        // Auto-play next track
+        document.getElementById("play-btn-" + (i + 1)).innerHTML = "&#9654;";
         if (i < audios.length - 1) {
           audios[i + 1].play();
         } else {
@@ -952,11 +1019,7 @@
     // Sticky player controls
     function togglePlay() {
       if (currentTrack === -1) { audios[0].play(); return; }
-      if (audios[currentTrack].paused) {
-        audios[currentTrack].play();
-      } else {
-        audios[currentTrack].pause();
-      }
+      audios[currentTrack].paused ? audios[currentTrack].play() : audios[currentTrack].pause();
     }
 
     function nextTrack() {
@@ -972,26 +1035,21 @@
     function updateStickyProgress(audio) {
       const pct = (audio.currentTime / audio.duration) * 100;
       document.getElementById("sticky-progress-fill").style.width = pct + "%";
-      const cur = formatTime(audio.currentTime);
-      const dur = formatTime(audio.duration);
-      document.getElementById("sticky-time").textContent = cur + " / " + dur;
+      document.getElementById("sticky-time").textContent = formatTime(audio.currentTime) + " / " + formatTime(audio.duration);
     }
 
     function seekTrack(e) {
       if (currentTrack === -1) return;
       const bar = document.getElementById("sticky-progress");
-      const pct = e.offsetX / bar.offsetWidth;
-      audios[currentTrack].currentTime = pct * audios[currentTrack].duration;
+      audios[currentTrack].currentTime = (e.offsetX / bar.offsetWidth) * audios[currentTrack].duration;
     }
 
     function formatTime(s) {
       if (isNaN(s)) return "0:00";
-      const m = Math.floor(s / 60);
-      const sec = Math.floor(s % 60).toString().padStart(2, "0");
-      return m + ":" + sec;
+      return Math.floor(s / 60) + ":" + Math.floor(s % 60).toString().padStart(2, "0");
     }
 
-    // Audio visualizer
+    // Visualizer
     function setupVisualizer(audio) {
       try {
         if (!audioContext) {
@@ -1017,8 +1075,7 @@
         analyser.getByteFrequencyData(data);
         vizBars.forEach((bar, i) => {
           const val = data[i] || 0;
-          const height = Math.max(4, (val / 255) * 40);
-          bar.style.height = height + "px";
+          bar.style.height = Math.max(4, (val / 255) * 40) + "px";
           bar.style.opacity = 0.4 + (val / 255) * 0.6;
         });
       }
@@ -1035,13 +1092,12 @@
       document.body.removeChild(a);
     }
 
-    // Mailing list (local demo — connect to Mailchimp etc. for real use)
+    // Mailing list
     function submitEmail() {
       const email = document.getElementById("email-input").value;
       if (email && email.includes("@")) {
         document.getElementById("mailing-form").style.display = "none";
         document.getElementById("mailing-success").style.display = "block";
-        // Save locally for now
         const subs = JSON.parse(localStorage.getItem("bretSiersSubs") || "[]");
         subs.push(email);
         localStorage.setItem("bretSiersSubs", JSON.stringify(subs));
@@ -1055,7 +1111,6 @@
 
     // Init
     updatePlayCountDisplay();
-    restoreFavorites();
   </script>
 
 </body>
