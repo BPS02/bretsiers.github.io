@@ -1234,13 +1234,21 @@
     // Mailing list
     function submitEmail() {
       const email = document.getElementById("email-input").value;
-      if (email && email.includes("@")) {
-        document.getElementById("mailing-form").style.display = "none";
-        document.getElementById("mailing-success").style.display = "block";
-        const subs = JSON.parse(localStorage.getItem("bretSiersSubs") || "[]");
-        subs.push(email);
-        localStorage.setItem("bretSiersSubs", JSON.stringify(subs));
-      }
+      if (!email || !email.includes("@")) return;
+      fetch("https://formspree.io/f/xdaprkyq", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify({ email: email })
+      })
+      .then(res => {
+        if (res.ok) {
+          document.getElementById("mailing-form").style.display = "none";
+          document.getElementById("mailing-success").style.display = "block";
+        } else {
+          alert("Something went wrong. Please try again.");
+        }
+      })
+      .catch(() => alert("Something went wrong. Please try again."));
     }
 
     // Register service worker
