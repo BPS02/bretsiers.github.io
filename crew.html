@@ -261,6 +261,135 @@
       padding: 20px;
     }
 
+    /* MEMBERS PANEL */
+    .members-panel {
+      display: none;
+      max-width: 600px;
+      margin: 0 auto 40px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(192, 160, 96, 0.15);
+      border-radius: 12px;
+      padding: 30px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .members-panel.visible { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .members-panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .members-panel-title {
+      font-size: 1.1em;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #c0a060;
+    }
+
+    .members-panel-close {
+      background: none;
+      border: 1px solid #333;
+      color: #666;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .members-panel-close:hover {
+      color: #e74c3c;
+      border-color: #e74c3c;
+    }
+
+    .members-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .member-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      transition: border-color 0.2s;
+    }
+
+    .member-item:hover {
+      border-color: rgba(192, 160, 96, 0.2);
+    }
+
+    .member-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid #c0a060;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1a1200, #2a1f0a);
+      font-size: 0.8em;
+      font-weight: bold;
+      color: #c0a060;
+      flex-shrink: 0;
+    }
+
+    .member-details { flex: 1; }
+
+    .member-name {
+      font-size: 0.95em;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .member-username {
+      font-size: 0.8em;
+      color: #555;
+    }
+
+    .member-bio {
+      font-size: 0.8em;
+      color: #777;
+      margin-top: 2px;
+      font-style: italic;
+    }
+
+    .member-joined {
+      font-size: 0.7em;
+      color: #444;
+      letter-spacing: 1px;
+    }
+
+    .members-empty {
+      text-align: center;
+      padding: 30px;
+      color: #555;
+      font-size: 0.9em;
+      line-height: 1.7;
+    }
+
+    .members-empty a {
+      color: #c0a060;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(192, 160, 96, 0.3);
+    }
+
     /* FOOTER */
     footer {
       text-align: center;
@@ -372,6 +501,15 @@
 
     </div>
 
+    <!-- MEMBERS PANEL -->
+    <div class="members-panel" id="members-panel">
+      <div class="members-panel-header">
+        <span class="members-panel-title" id="members-panel-title">Members</span>
+        <button class="members-panel-close" onclick="closeMembers()">&times;</button>
+      </div>
+      <div class="members-list" id="members-list"></div>
+    </div>
+
     <div class="join-section">
       <h3>Sign Up</h3>
       <div class="join-form" id="join-form">
@@ -391,6 +529,7 @@
     &nbsp;&middot;&nbsp; <a href="privacy.html">Privacy Policy</a>
   </footer>
 
+  <script src="auth.js"></script>
   <script>
     let selectedCrew = null;
 
@@ -403,6 +542,52 @@
       document.getElementById("join-name").disabled = false;
       document.getElementById("join-email").disabled = false;
       document.getElementById("join-btn").disabled = false;
+
+      // Show members panel
+      showMembers(name);
+    }
+
+    function showMembers(crewName) {
+      const panel = document.getElementById("members-panel");
+      const list = document.getElementById("members-list");
+      const title = document.getElementById("members-panel-title");
+
+      title.textContent = crewName + " Members";
+
+      // Get all users from auth system
+      const users = JSON.parse(localStorage.getItem("bsm_users") || "{}");
+      const members = Object.values(users).filter(u => u.crew === crewName);
+
+      if (members.length === 0) {
+        list.innerHTML = '<div class="members-empty">No members yet.<br>Be the first to join! <a href="login.html">Sign up</a> and select this crew.</div>';
+      } else {
+        list.innerHTML = members.map(m => {
+          const initials = m.displayName.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
+          const joined = new Date(m.joinedDate).toLocaleDateString("en-US", { month: "short", year: "numeric" });
+          return `<div class="member-item">
+            <div class="member-avatar">${initials}</div>
+            <div class="member-details">
+              <div class="member-name">${escapeHtml(m.displayName)}</div>
+              <div class="member-username">@${escapeHtml(m.username)}</div>
+              ${m.bio ? `<div class="member-bio">${escapeHtml(m.bio)}</div>` : ""}
+            </div>
+            <div class="member-joined">Joined ${joined}</div>
+          </div>`;
+        }).join("");
+      }
+
+      panel.classList.add("visible");
+      panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    function closeMembers() {
+      document.getElementById("members-panel").classList.remove("visible");
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement("div");
+      div.textContent = text;
+      return div.innerHTML;
     }
 
     function submitJoin() {
@@ -422,12 +607,6 @@
         if (res.ok) {
           document.getElementById("join-form").style.display = "none";
           document.getElementById("join-success").style.display = "block";
-
-          // Update local count
-          const counts = JSON.parse(localStorage.getItem("crewCounts") || '{}');
-          const key = selectedCrew.toLowerCase().replace(/\s+/g, '-');
-          counts[key] = (counts[key] || 0) + 1;
-          localStorage.setItem("crewCounts", JSON.stringify(counts));
           updateCrewCounts();
         } else {
           alert("Something went wrong. Please try again.");
@@ -437,13 +616,20 @@
     }
 
     function updateCrewCounts() {
-      const counts = JSON.parse(localStorage.getItem("crewCounts") || '{}');
-      const groups = ['creators', 'streamers', 'advantage', 'events', 'teachers', 'jobs'];
-      groups.forEach(g => {
-        const el = document.getElementById("count-" + g);
+      const users = JSON.parse(localStorage.getItem("bsm_users") || "{}");
+      const crewNames = {
+        'creators': 'Content Creators',
+        'streamers': 'Streamers',
+        'advantage': 'Advantage',
+        'events': 'Events',
+        'teachers': 'Teachers',
+        'jobs': 'Jobs'
+      };
+
+      Object.keys(crewNames).forEach(key => {
+        const el = document.getElementById("count-" + key);
         if (el) {
-          const key = g === 'creators' ? 'content-creators' : g;
-          const count = counts[key] || 0;
+          const count = Object.values(users).filter(u => u.crew === crewNames[key]).length;
           el.textContent = count + (count === 1 ? " member" : " members");
         }
       });
