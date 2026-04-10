@@ -157,15 +157,21 @@
     }
 
     .crew-card .member-count {
-      display: inline-block;
-      margin-top: 16px;
-      font-size: 0.75em;
-      color: #666;
+      display: block;
+      margin-top: 18px;
+      font-size: 1.4em;
+      font-weight: bold;
+      color: #c0a060;
       letter-spacing: 1px;
+    }
+
+    .crew-card .member-label {
+      display: block;
+      font-size: 0.7em;
+      color: #555;
+      letter-spacing: 2px;
       text-transform: uppercase;
-      padding: 4px 12px;
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 20px;
+      margin-top: 2px;
     }
 
     /* CARD COLORS */
@@ -461,42 +467,48 @@
         <span class="crew-icon">&#127909;</span>
         <h2>Content Creators</h2>
         <p>Create videos, posts, and art inspired by the music. Share your creative vision with the world.</p>
-        <span class="member-count" id="count-creators">0 members</span>
+        <span class="member-count" id="count-creators">0</span>
+        <span class="member-label">members</span>
       </div>
 
       <div class="crew-card streamers" onclick="selectCrew(this, 'Streamers')">
         <span class="crew-icon">&#127897;</span>
         <h2>Streamers</h2>
         <p>Stream with the music. Use tracks on your channel and bring the sound to your audience live.</p>
-        <span class="member-count" id="count-streamers">0 members</span>
+        <span class="member-count" id="count-streamers">0</span>
+        <span class="member-label">members</span>
       </div>
 
       <div class="crew-card advantage" onclick="selectCrew(this, 'Advantage')">
         <span class="crew-icon">&#11088;</span>
         <h2>Advantage</h2>
         <p>Get early access to new releases, exclusive content, and behind-the-scenes looks at the creative process.</p>
-        <span class="member-count" id="count-advantage">0 members</span>
+        <span class="member-count" id="count-advantage">0</span>
+        <span class="member-label">members</span>
       </div>
 
       <div class="crew-card events" onclick="selectCrew(this, 'Events')">
         <span class="crew-icon">&#127914;</span>
         <h2>Events</h2>
         <p>Help organize and participate in live events, listening parties, and community meetups.</p>
-        <span class="member-count" id="count-events">0 members</span>
+        <span class="member-count" id="count-events">0</span>
+        <span class="member-label">members</span>
       </div>
 
       <div class="crew-card teachers" onclick="selectCrew(this, 'Teachers')">
         <span class="crew-icon">&#128218;</span>
         <h2>Teachers</h2>
         <p>Educate and inspire. Share knowledge about AI music, production techniques, and creative tools.</p>
-        <span class="member-count" id="count-teachers">0 members</span>
+        <span class="member-count" id="count-teachers">0</span>
+        <span class="member-label">members</span>
       </div>
 
       <div class="crew-card jobs" onclick="selectCrew(this, 'Jobs')">
         <span class="crew-icon">&#128188;</span>
         <h2>Jobs</h2>
         <p>Find opportunities in music, tech, and creative fields. Connect with others looking to hire or collaborate.</p>
-        <span class="member-count" id="count-jobs">0 members</span>
+        <span class="member-count" id="count-jobs">0</span>
+        <span class="member-label">members</span>
       </div>
 
     </div>
@@ -552,11 +564,11 @@
       const list = document.getElementById("members-list");
       const title = document.getElementById("members-panel-title");
 
-      title.textContent = crewName + " Members";
-
       // Get all users from auth system
       const users = JSON.parse(localStorage.getItem("bsm_users") || "{}");
       const members = Object.values(users).filter(u => u.crew === crewName);
+
+      title.textContent = crewName + " — " + members.length + (members.length === 1 ? " Member" : " Members");
 
       if (members.length === 0) {
         list.innerHTML = '<div class="members-empty">No members yet.<br>Be the first to join! <a href="login.html">Sign up</a> and select this crew.</div>';
@@ -630,7 +642,7 @@
         const el = document.getElementById("count-" + key);
         if (el) {
           const count = Object.values(users).filter(u => u.crew === crewNames[key]).length;
-          el.textContent = count + (count === 1 ? " member" : " members");
+          el.textContent = count;
         }
       });
     }
