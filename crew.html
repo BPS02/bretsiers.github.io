@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Join the Crew — Bret Siers Music</title>
+  <meta name="description" content="Join the Bret Siers Music crew. Connect with content creators, streamers, event planners, teachers, and more.">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <meta name="theme-color" content="#c0a060">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background-color: #020810;
+      color: #ffffff;
+      font-family: 'Arial', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* STARFIELD */
+    #starfield {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    #starfield canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* LAYOUT */
+    .page-content {
+      position: relative;
+      z-index: 1;
+      padding: 40px 20px 60px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .back-link {
+      display: inline-block;
+      color: #888;
+      text-decoration: none;
+      font-size: 0.9em;
+      border-bottom: 1px solid #555;
+      padding-bottom: 2px;
+      margin-bottom: 40px;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover { color: #c0a060; }
+
+    /* HEADER */
+    .crew-header {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+
+    .crew-header h1 {
+      font-size: 2.5em;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #c0a060;
+      margin-bottom: 15px;
+    }
+
+    .crew-header p {
+      color: #999;
+      font-size: 1em;
+      line-height: 1.7;
+      max-width: 550px;
+      margin: 0 auto;
+    }
+
+    .divider {
+      width: 60px;
+      height: 2px;
+      background: #c0a060;
+      margin: 40px auto;
+      opacity: 0.4;
+    }
+
+    /* CREW GRID */
+    .crew-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 50px;
+    }
+
+    .crew-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(192, 160, 96, 0.15);
+      border-radius: 12px;
+      padding: 35px 25px;
+      text-align: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .crew-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--card-color), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .crew-card:hover {
+      border-color: var(--card-color);
+      background: rgba(255, 255, 255, 0.05);
+      transform: translateY(-4px);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4), 0 0 30px color-mix(in srgb, var(--card-color) 15%, transparent);
+    }
+
+    .crew-card:hover::before { opacity: 1; }
+
+    .crew-card.selected {
+      border-color: var(--card-color);
+      background: rgba(255, 255, 255, 0.06);
+      box-shadow: 0 0 25px color-mix(in srgb, var(--card-color) 20%, transparent);
+    }
+
+    .crew-card.selected::before { opacity: 1; }
+
+    .crew-icon {
+      font-size: 2.5em;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .crew-card h2 {
+      font-size: 1.15em;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+
+    .crew-card p {
+      color: #888;
+      font-size: 0.85em;
+      line-height: 1.7;
+    }
+
+    .crew-card .member-count {
+      display: inline-block;
+      margin-top: 16px;
+      font-size: 0.75em;
+      color: #666;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+    }
+
+    /* CARD COLORS */
+    .crew-card.creators { --card-color: #e74c3c; }
+    .crew-card.streamers { --card-color: #9b59b6; }
+    .crew-card.advantage { --card-color: #c0a060; }
+    .crew-card.events { --card-color: #2ecc71; }
+    .crew-card.teachers { --card-color: #3498db; }
+    .crew-card.jobs { --card-color: #e67e22; }
+
+    /* JOIN FORM */
+    .join-section {
+      text-align: center;
+      padding: 40px 20px;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .join-section h3 {
+      font-size: 1.1em;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #888;
+      margin-bottom: 20px;
+    }
+
+    .join-form {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .join-form input {
+      width: 100%;
+      max-width: 360px;
+      padding: 12px 18px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(192, 160, 96, 0.2);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 0.95em;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .join-form input:focus {
+      border-color: #c0a060;
+    }
+
+    .join-form input::placeholder {
+      color: #555;
+    }
+
+    .selected-crew {
+      color: #c0a060;
+      font-size: 0.85em;
+      letter-spacing: 1px;
+      min-height: 20px;
+    }
+
+    .join-btn {
+      padding: 12px 40px;
+      background: linear-gradient(135deg, #c0a060, #a08040);
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95em;
+      font-weight: bold;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .join-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 20px rgba(192, 160, 96, 0.3);
+    }
+
+    .join-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .join-success {
+      display: none;
+      color: #2ecc71;
+      font-size: 1em;
+      letter-spacing: 1px;
+      padding: 20px;
+    }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 30px;
+      color: #333;
+      font-size: 0.78em;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      position: relative;
+      z-index: 1;
+    }
+
+    footer a {
+      color: #555;
+      text-decoration: none;
+      border-bottom: 1px solid #333;
+    }
+
+    /* MOBILE */
+    @media (max-width: 768px) {
+      .crew-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+      }
+      .crew-header h1 {
+        font-size: 1.8em;
+        letter-spacing: 2px;
+      }
+      .crew-card {
+        padding: 25px 18px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .crew-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+      .crew-header h1 {
+        font-size: 1.5em;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="starfield"><canvas id="starfield-canvas"></canvas></div>
+
+  <div class="page-content">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
+      <a class="back-link" href="index.html" style="margin-bottom:0;">&larr; Back to Music</a>
+      <div style="display:flex; gap:16px;">
+        <a class="back-link" href="feed.html" style="margin-bottom:0;">Feed</a>
+        <a class="back-link" href="login.html" style="margin-bottom:0;">Login</a>
+      </div>
+    </div>
+
+    <div class="crew-header">
+      <h1>Join the Crew</h1>
+      <p>Be part of the Bret Siers Music community. Pick your crew and connect with others who share your passion.</p>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="crew-grid">
+
+      <div class="crew-card creators" onclick="selectCrew(this, 'Content Creators')">
+        <span class="crew-icon">&#127909;</span>
+        <h2>Content Creators</h2>
+        <p>Create videos, posts, and art inspired by the music. Share your creative vision with the world.</p>
+        <span class="member-count" id="count-creators">0 members</span>
+      </div>
+
+      <div class="crew-card streamers" onclick="selectCrew(this, 'Streamers')">
+        <span class="crew-icon">&#127897;</span>
+        <h2>Streamers</h2>
+        <p>Stream with the music. Use tracks on your channel and bring the sound to your audience live.</p>
+        <span class="member-count" id="count-streamers">0 members</span>
+      </div>
+
+      <div class="crew-card advantage" onclick="selectCrew(this, 'Advantage')">
+        <span class="crew-icon">&#11088;</span>
+        <h2>Advantage</h2>
+        <p>Get early access to new releases, exclusive content, and behind-the-scenes looks at the creative process.</p>
+        <span class="member-count" id="count-advantage">0 members</span>
+      </div>
+
+      <div class="crew-card events" onclick="selectCrew(this, 'Events')">
+        <span class="crew-icon">&#127914;</span>
+        <h2>Events</h2>
+        <p>Help organize and participate in live events, listening parties, and community meetups.</p>
+        <span class="member-count" id="count-events">0 members</span>
+      </div>
+
+      <div class="crew-card teachers" onclick="selectCrew(this, 'Teachers')">
+        <span class="crew-icon">&#128218;</span>
+        <h2>Teachers</h2>
+        <p>Educate and inspire. Share knowledge about AI music, production techniques, and creative tools.</p>
+        <span class="member-count" id="count-teachers">0 members</span>
+      </div>
+
+      <div class="crew-card jobs" onclick="selectCrew(this, 'Jobs')">
+        <span class="crew-icon">&#128188;</span>
+        <h2>Jobs</h2>
+        <p>Find opportunities in music, tech, and creative fields. Connect with others looking to hire or collaborate.</p>
+        <span class="member-count" id="count-jobs">0 members</span>
+      </div>
+
+    </div>
+
+    <div class="join-section">
+      <h3>Sign Up</h3>
+      <div class="join-form" id="join-form">
+        <p class="selected-crew" id="selected-crew-label">Select a crew above to get started</p>
+        <input type="text" id="join-name" placeholder="Your name" disabled>
+        <input type="email" id="join-email" placeholder="Your email" disabled>
+        <button class="join-btn" id="join-btn" onclick="submitJoin()" disabled>Join the Crew</button>
+      </div>
+      <div class="join-success" id="join-success">
+        Welcome to the crew! We'll be in touch soon.
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    &copy; 2026 Bret Siers &nbsp;&middot;&nbsp; All Rights Reserved
+    &nbsp;&middot;&nbsp; <a href="privacy.html">Privacy Policy</a>
+  </footer>
+
+  <script>
+    let selectedCrew = null;
+
+    function selectCrew(card, name) {
+      document.querySelectorAll(".crew-card").forEach(c => c.classList.remove("selected"));
+      card.classList.add("selected");
+      selectedCrew = name;
+
+      document.getElementById("selected-crew-label").textContent = "Joining: " + name;
+      document.getElementById("join-name").disabled = false;
+      document.getElementById("join-email").disabled = false;
+      document.getElementById("join-btn").disabled = false;
+    }
+
+    function submitJoin() {
+      const name = document.getElementById("join-name").value;
+      const email = document.getElementById("join-email").value;
+
+      if (!name || !email || !email.includes("@") || !selectedCrew) {
+        return;
+      }
+
+      fetch("https://formspree.io/f/xdaprkyq", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify({ name: name, email: email, crew: selectedCrew })
+      })
+      .then(res => {
+        if (res.ok) {
+          document.getElementById("join-form").style.display = "none";
+          document.getElementById("join-success").style.display = "block";
+
+          // Update local count
+          const counts = JSON.parse(localStorage.getItem("crewCounts") || '{}');
+          const key = selectedCrew.toLowerCase().replace(/\s+/g, '-');
+          counts[key] = (counts[key] || 0) + 1;
+          localStorage.setItem("crewCounts", JSON.stringify(counts));
+          updateCrewCounts();
+        } else {
+          alert("Something went wrong. Please try again.");
+        }
+      })
+      .catch(() => alert("Something went wrong. Please try again."));
+    }
+
+    function updateCrewCounts() {
+      const counts = JSON.parse(localStorage.getItem("crewCounts") || '{}');
+      const groups = ['creators', 'streamers', 'advantage', 'events', 'teachers', 'jobs'];
+      groups.forEach(g => {
+        const el = document.getElementById("count-" + g);
+        if (el) {
+          const key = g === 'creators' ? 'content-creators' : g;
+          const count = counts[key] || 0;
+          el.textContent = count + (count === 1 ? " member" : " members");
+        }
+      });
+    }
+
+    updateCrewCounts();
+  </script>
+
+  <!-- STARFIELD ANIMATION -->
+  <script>
+    (function() {
+      const canvas = document.getElementById("starfield-canvas");
+      const ctx = canvas.getContext("2d");
+      let width, height, stars;
+      const STAR_COUNT = 300;
+      const SPEED = 0.35;
+
+      function init() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+        stars = [];
+        for (let i = 0; i < STAR_COUNT; i++) {
+          stars.push(createStar(true));
+        }
+      }
+
+      function createStar(randomZ) {
+        return {
+          x: (Math.random() - 0.5) * width * 2,
+          y: (Math.random() - 0.5) * height * 2,
+          z: randomZ ? Math.random() * 1000 : 1000,
+          size: Math.random() * 1.5 + 0.5,
+          twinkle: Math.random() * Math.PI * 2,
+          twinkleSpeed: Math.random() * 0.02 + 0.005,
+          color: Math.random() > 0.85
+            ? `hsl(${Math.floor(Math.random() * 60 + 200)}, 60%, 80%)`
+            : "#fff"
+        };
+      }
+
+      function animate() {
+        ctx.fillStyle = "rgba(2, 8, 16, 0.85)";
+        ctx.fillRect(0, 0, width, height);
+
+        const cx = width / 2;
+        const cy = height / 2;
+
+        for (let i = 0; i < stars.length; i++) {
+          const s = stars[i];
+          s.z -= SPEED;
+          s.twinkle += s.twinkleSpeed;
+
+          if (s.z <= 0) {
+            stars[i] = createStar(false);
+            continue;
+          }
+
+          const sx = (s.x / s.z) * 200 + cx;
+          const sy = (s.y / s.z) * 200 + cy;
+
+          if (sx < -50 || sx > width + 50 || sy < -50 || sy > height + 50) {
+            stars[i] = createStar(false);
+            continue;
+          }
+
+          const scale = (1000 - s.z) / 1000;
+          const r = s.size * scale * 2;
+          const alpha = scale * (0.6 + 0.4 * Math.sin(s.twinkle));
+
+          ctx.beginPath();
+          ctx.arc(sx, sy, Math.max(r, 0.3), 0, Math.PI * 2);
+          ctx.fillStyle = s.color;
+          ctx.globalAlpha = alpha;
+          ctx.fill();
+
+          if (r > 1.2) {
+            ctx.beginPath();
+            ctx.arc(sx, sy, r * 2.5, 0, Math.PI * 2);
+            ctx.fillStyle = s.color;
+            ctx.globalAlpha = alpha * 0.1;
+            ctx.fill();
+          }
+        }
+
+        ctx.globalAlpha = 1;
+        requestAnimationFrame(animate);
+      }
+
+      init();
+      animate();
+
+      window.addEventListener("resize", () => {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      });
+    })();
+  </script>
+
+</body>
+</html>

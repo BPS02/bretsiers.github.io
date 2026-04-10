@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile — Bret Siers Music</title>
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <meta name="theme-color" content="#c0a060">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background-color: #020810;
+      color: #fff;
+      font-family: 'Arial', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    #starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+    #starfield canvas { display: block; width: 100%; height: 100%; }
+
+    /* NAV */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 24px;
+      background: rgba(2, 8, 16, 0.9);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      backdrop-filter: blur(10px);
+    }
+
+    .nav-brand {
+      color: #c0a060;
+      font-weight: bold;
+      font-size: 1.1em;
+      letter-spacing: 2px;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .nav-links a {
+      color: #888;
+      text-decoration: none;
+      font-size: 0.85em;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover, .nav-links a.active { color: #c0a060; }
+
+    .nav-links .logout-btn {
+      color: #555;
+      cursor: pointer;
+      background: none;
+      border: 1px solid #333;
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-size: 0.8em;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .nav-links .logout-btn:hover { color: #e74c3c; border-color: #e74c3c; }
+
+    /* PROFILE */
+    .profile-container {
+      position: relative;
+      z-index: 1;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 80px 20px 60px;
+    }
+
+    .profile-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .profile-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      border: 3px solid #c0a060;
+      margin: 0 auto 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1a1200, #2a1f0a);
+      font-size: 2em;
+      font-weight: bold;
+      color: #c0a060;
+      letter-spacing: 3px;
+    }
+
+    .profile-name {
+      font-size: 1.6em;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .profile-username {
+      color: #666;
+      font-size: 0.9em;
+      margin-bottom: 10px;
+    }
+
+    .profile-crew-badge {
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 0.8em;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      border: 1px solid #c0a060;
+      color: #c0a060;
+      margin-bottom: 8px;
+    }
+
+    .profile-date {
+      color: #444;
+      font-size: 0.8em;
+      letter-spacing: 1px;
+    }
+
+    .profile-bio {
+      text-align: center;
+      color: #999;
+      font-size: 0.95em;
+      line-height: 1.7;
+      margin-bottom: 30px;
+      font-style: italic;
+    }
+
+    .divider {
+      width: 60px;
+      height: 2px;
+      background: #c0a060;
+      margin: 30px auto;
+      opacity: 0.4;
+    }
+
+    /* EDIT FORM */
+    .edit-section h3 {
+      text-align: center;
+      font-size: 0.85em;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    .edit-form {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    .edit-form label {
+      font-size: 0.8em;
+      color: #666;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: -8px;
+    }
+
+    .edit-form input, .edit-form textarea, .edit-form select {
+      width: 100%;
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(192,160,96,0.15);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 0.95em;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .edit-form input:focus, .edit-form textarea:focus, .edit-form select:focus {
+      border-color: #c0a060;
+    }
+
+    .edit-form textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .edit-form select option {
+      background: #0a0f1a;
+      color: #fff;
+    }
+
+    .save-btn {
+      padding: 12px 30px;
+      background: linear-gradient(135deg, #c0a060, #a08040);
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9em;
+      font-weight: bold;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s;
+      align-self: center;
+      margin-top: 8px;
+    }
+
+    .save-btn:hover {
+      transform: scale(1.02);
+      box-shadow: 0 4px 20px rgba(192,160,96,0.3);
+    }
+
+    .save-msg {
+      text-align: center;
+      color: #2ecc71;
+      font-size: 0.85em;
+      min-height: 20px;
+    }
+
+    /* STATS */
+    .profile-stats {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin: 20px 0;
+    }
+
+    .stat { text-align: center; }
+    .stat-num { font-size: 1.5em; font-weight: bold; color: #c0a060; }
+    .stat-label { font-size: 0.7em; color: #555; letter-spacing: 2px; text-transform: uppercase; margin-top: 4px; }
+
+    @media (max-width: 480px) {
+      .nav { padding: 12px 16px; }
+      .nav-links { gap: 12px; }
+      .nav-links a { font-size: 0.75em; }
+      .profile-name { font-size: 1.3em; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="starfield"><canvas id="starfield-canvas"></canvas></div>
+
+  <nav class="nav">
+    <a class="nav-brand" href="index.html">BPS</a>
+    <div class="nav-links">
+      <a href="feed.html">Feed</a>
+      <a href="crew.html">Crew</a>
+      <a href="profile.html" class="active">Profile</a>
+      <button class="logout-btn" onclick="AUTH.logout()">Logout</button>
+    </div>
+  </nav>
+
+  <div class="profile-container">
+    <div class="profile-header">
+      <div class="profile-avatar" id="profile-avatar"></div>
+      <div class="profile-name" id="profile-name"></div>
+      <div class="profile-username" id="profile-username"></div>
+      <div class="profile-crew-badge" id="profile-crew"></div>
+      <div class="profile-stats">
+        <div class="stat">
+          <div class="stat-num" id="stat-posts">0</div>
+          <div class="stat-label">Posts</div>
+        </div>
+      </div>
+      <div class="profile-date" id="profile-date"></div>
+    </div>
+
+    <div class="profile-bio" id="profile-bio"></div>
+
+    <div class="divider"></div>
+
+    <div class="edit-section">
+      <h3>Edit Profile</h3>
+      <form class="edit-form" onsubmit="saveProfile(event)">
+        <label>Display Name</label>
+        <input type="text" id="edit-name" placeholder="Your display name">
+
+        <label>Bio</label>
+        <textarea id="edit-bio" placeholder="Tell the crew about yourself..."></textarea>
+
+        <label>Crew</label>
+        <select id="edit-crew">
+          <option value="">No crew selected</option>
+          <option value="Content Creators">Content Creators</option>
+          <option value="Streamers">Streamers</option>
+          <option value="Advantage">Advantage</option>
+          <option value="Events">Events</option>
+          <option value="Teachers">Teachers</option>
+          <option value="Jobs">Jobs</option>
+        </select>
+
+        <p class="save-msg" id="save-msg"></p>
+        <button type="submit" class="save-btn">Save Changes</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="auth.js"></script>
+  <script>
+    if (!AUTH.isLoggedIn()) {
+      window.location.href = "login.html";
+    }
+
+    function loadProfile() {
+      const user = AUTH.getCurrentUser();
+      if (!user) return;
+
+      const initials = user.displayName.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 3);
+      document.getElementById("profile-avatar").textContent = initials;
+      document.getElementById("profile-name").textContent = user.displayName;
+      document.getElementById("profile-username").textContent = "@" + user.username;
+      document.getElementById("profile-crew").textContent = user.crew || "No crew";
+      document.getElementById("profile-crew").style.display = user.crew ? "inline-block" : "none";
+      document.getElementById("profile-bio").textContent = user.bio || "No bio yet...";
+      document.getElementById("profile-date").textContent = "Joined " + new Date(user.joinedDate).toLocaleDateString("en-US", { month: "long", year: "numeric" });
+
+      // Count posts
+      const posts = FEED.getPosts().filter(p => p.username === user.username);
+      document.getElementById("stat-posts").textContent = posts.length;
+
+      // Fill edit form
+      document.getElementById("edit-name").value = user.displayName;
+      document.getElementById("edit-bio").value = user.bio || "";
+      document.getElementById("edit-crew").value = user.crew || "";
+    }
+
+    function saveProfile(e) {
+      e.preventDefault();
+      const name = document.getElementById("edit-name").value;
+      const bio = document.getElementById("edit-bio").value;
+      const crew = document.getElementById("edit-crew").value;
+
+      AUTH.updateProfile({
+        displayName: name,
+        bio: bio,
+        crew: crew
+      });
+
+      document.getElementById("save-msg").textContent = "Profile saved!";
+      setTimeout(() => document.getElementById("save-msg").textContent = "", 2000);
+      loadProfile();
+    }
+
+    loadProfile();
+  </script>
+
+  <script>
+    (function() {
+      const canvas = document.getElementById("starfield-canvas");
+      const ctx = canvas.getContext("2d");
+      let width, height, stars;
+      const STAR_COUNT = 300, SPEED = 0.35;
+      function init() { width=canvas.width=window.innerWidth; height=canvas.height=window.innerHeight; stars=[]; for(let i=0;i<STAR_COUNT;i++) stars.push(createStar(true)); }
+      function createStar(rz) { return { x:(Math.random()-0.5)*width*2, y:(Math.random()-0.5)*height*2, z:rz?Math.random()*1000:1000, size:Math.random()*1.5+0.5, twinkle:Math.random()*Math.PI*2, twinkleSpeed:Math.random()*0.02+0.005, color:Math.random()>0.85?`hsl(${Math.floor(Math.random()*60+200)},60%,80%)`:"#fff" }; }
+      function animate() { ctx.fillStyle="rgba(2,8,16,0.85)"; ctx.fillRect(0,0,width,height); const cx=width/2,cy=height/2; for(let i=0;i<stars.length;i++){const s=stars[i];s.z-=SPEED;s.twinkle+=s.twinkleSpeed;if(s.z<=0){stars[i]=createStar(false);continue;}const sx=(s.x/s.z)*200+cx,sy=(s.y/s.z)*200+cy;if(sx<-50||sx>width+50||sy<-50||sy>height+50){stars[i]=createStar(false);continue;}const scale=(1000-s.z)/1000,r=s.size*scale*2,alpha=scale*(0.6+0.4*Math.sin(s.twinkle));ctx.beginPath();ctx.arc(sx,sy,Math.max(r,0.3),0,Math.PI*2);ctx.fillStyle=s.color;ctx.globalAlpha=alpha;ctx.fill();if(r>1.2){ctx.beginPath();ctx.arc(sx,sy,r*2.5,0,Math.PI*2);ctx.globalAlpha=alpha*0.1;ctx.fill();}} ctx.globalAlpha=1;requestAnimationFrame(animate); }
+      init(); animate();
+      window.addEventListener("resize",()=>{width=canvas.width=window.innerWidth;height=canvas.height=window.innerHeight;});
+    })();
+  </script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-const CACHE_NAME = "bret-siers-v4";
+const CACHE_NAME = "bret-siers-v6";
 const BASE = "/bretsiers.github.io/";
 const ASSETS = [
   BASE,
@@ -13,7 +13,12 @@ const ASSETS = [
   BASE + "People.mp3",
   BASE + "Hope in the Rain.mp3",
   BASE + "Bucket List.mp3",
-  BASE + "privacy.html"
+  BASE + "privacy.html",
+  BASE + "crew.html",
+  BASE + "login.html",
+  BASE + "profile.html",
+  BASE + "feed.html",
+  BASE + "auth.js"
 ];
 
 self.addEventListener("install", event => {

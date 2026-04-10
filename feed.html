@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feed — Bret Siers Music</title>
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <meta name="theme-color" content="#c0a060">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background-color: #020810;
+      color: #fff;
+      font-family: 'Arial', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    #starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+    #starfield canvas { display: block; width: 100%; height: 100%; }
+
+    /* NAV */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 24px;
+      background: rgba(2, 8, 16, 0.9);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      backdrop-filter: blur(10px);
+    }
+
+    .nav-brand { color: #c0a060; font-weight: bold; font-size: 1.1em; letter-spacing: 2px; text-decoration: none; }
+
+    .nav-links { display: flex; gap: 20px; align-items: center; }
+    .nav-links a { color: #888; text-decoration: none; font-size: 0.85em; letter-spacing: 1px; text-transform: uppercase; transition: color 0.2s; }
+    .nav-links a:hover, .nav-links a.active { color: #c0a060; }
+    .nav-links .logout-btn { color: #555; cursor: pointer; background: none; border: 1px solid #333; padding: 4px 12px; border-radius: 4px; font-size: 0.8em; letter-spacing: 1px; text-transform: uppercase; }
+    .nav-links .logout-btn:hover { color: #e74c3c; border-color: #e74c3c; }
+
+    /* FEED */
+    .feed-container {
+      position: relative;
+      z-index: 1;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 70px 20px 40px;
+    }
+
+    .feed-header {
+      text-align: center;
+      padding: 20px 0 10px;
+    }
+
+    .feed-header h1 {
+      font-size: 1.4em;
+      color: #c0a060;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .feed-header p {
+      color: #555;
+      font-size: 0.85em;
+    }
+
+    /* COMPOSE */
+    .compose-box {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(192,160,96,0.12);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0 30px;
+    }
+
+    .compose-top {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .compose-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid #c0a060;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1a1200, #2a1f0a);
+      font-size: 0.8em;
+      font-weight: bold;
+      color: #c0a060;
+      flex-shrink: 0;
+    }
+
+    .compose-input {
+      flex: 1;
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 1em;
+      font-family: inherit;
+      resize: none;
+      outline: none;
+      min-height: 60px;
+      line-height: 1.6;
+    }
+
+    .compose-input::placeholder { color: #444; }
+
+    .compose-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .char-count { color: #444; font-size: 0.8em; }
+    .char-count.warn { color: #e74c3c; }
+
+    .post-btn {
+      padding: 8px 24px;
+      background: linear-gradient(135deg, #c0a060, #a08040);
+      color: #000;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.85em;
+      font-weight: bold;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .post-btn:hover { transform: scale(1.03); box-shadow: 0 2px 12px rgba(192,160,96,0.3); }
+    .post-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    /* POSTS */
+    .post {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      transition: border-color 0.2s;
+    }
+
+    .post:hover { border-color: rgba(192,160,96,0.15); }
+
+    .post-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .post-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 2px solid #c0a060;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1a1200, #2a1f0a);
+      font-size: 0.7em;
+      font-weight: bold;
+      color: #c0a060;
+      flex-shrink: 0;
+    }
+
+    .post-author-info { flex: 1; }
+
+    .post-author {
+      font-weight: bold;
+      font-size: 0.95em;
+      color: #fff;
+    }
+
+    .post-meta {
+      font-size: 0.75em;
+      color: #555;
+    }
+
+    .post-crew-tag {
+      display: inline-block;
+      padding: 1px 8px;
+      border-radius: 10px;
+      font-size: 0.7em;
+      letter-spacing: 0.5px;
+      border: 1px solid rgba(192,160,96,0.3);
+      color: #c0a060;
+      margin-left: 6px;
+    }
+
+    .post-content {
+      color: #ccc;
+      font-size: 0.95em;
+      line-height: 1.7;
+      margin-bottom: 14px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .post-actions {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .post-action {
+      background: none;
+      border: none;
+      color: #555;
+      font-size: 0.85em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: color 0.2s;
+      padding: 4px 0;
+    }
+
+    .post-action:hover { color: #c0a060; }
+    .post-action.liked { color: #e74c3c; }
+    .post-action.delete-btn:hover { color: #e74c3c; }
+
+    /* COMMENTS */
+    .comments-section {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .comment {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+      padding-left: 10px;
+    }
+
+    .comment-avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 1px solid #c0a060;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1a1200, #2a1f0a);
+      font-size: 0.55em;
+      font-weight: bold;
+      color: #c0a060;
+      flex-shrink: 0;
+    }
+
+    .comment-body { flex: 1; }
+    .comment-author { font-size: 0.8em; font-weight: bold; color: #999; }
+    .comment-text { font-size: 0.85em; color: #888; line-height: 1.5; margin-top: 2px; }
+    .comment-time { font-size: 0.7em; color: #444; margin-top: 2px; }
+
+    .comment-form {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      padding-left: 10px;
+    }
+
+    .comment-input {
+      flex: 1;
+      padding: 8px 12px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      color: #fff;
+      font-size: 0.85em;
+      font-family: inherit;
+      outline: none;
+    }
+
+    .comment-input:focus { border-color: rgba(192,160,96,0.3); }
+    .comment-input::placeholder { color: #444; }
+
+    .comment-submit {
+      padding: 8px 14px;
+      background: rgba(192,160,96,0.15);
+      color: #c0a060;
+      border: none;
+      border-radius: 20px;
+      font-size: 0.8em;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .comment-submit:hover { background: rgba(192,160,96,0.25); }
+
+    /* EMPTY STATE */
+    .empty-feed {
+      text-align: center;
+      padding: 60px 20px;
+      color: #444;
+    }
+
+    .empty-feed .emoji { font-size: 3em; margin-bottom: 16px; }
+    .empty-feed p { font-size: 0.95em; line-height: 1.7; }
+
+    @media (max-width: 480px) {
+      .nav { padding: 12px 16px; }
+      .nav-links { gap: 12px; }
+      .nav-links a { font-size: 0.75em; }
+      .feed-container { padding: 65px 14px 40px; }
+      .compose-box { padding: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="starfield"><canvas id="starfield-canvas"></canvas></div>
+
+  <nav class="nav">
+    <a class="nav-brand" href="index.html">BPS</a>
+    <div class="nav-links">
+      <a href="feed.html" class="active">Feed</a>
+      <a href="crew.html">Crew</a>
+      <a href="profile.html">Profile</a>
+      <button class="logout-btn" onclick="AUTH.logout()">Logout</button>
+    </div>
+  </nav>
+
+  <div class="feed-container">
+    <div class="feed-header">
+      <h1>The Feed</h1>
+      <p>What's on your mind, crew?</p>
+    </div>
+
+    <div class="compose-box">
+      <div class="compose-top">
+        <div class="compose-avatar" id="compose-avatar"></div>
+        <textarea class="compose-input" id="compose-input" placeholder="Share something with the crew..." maxlength="500" oninput="updateCharCount()"></textarea>
+      </div>
+      <div class="compose-bottom">
+        <span class="char-count" id="char-count">500</span>
+        <button class="post-btn" id="post-btn" onclick="createPost()" disabled>Post</button>
+      </div>
+    </div>
+
+    <div id="feed-posts"></div>
+  </div>
+
+  <script src="auth.js"></script>
+  <script>
+    if (!AUTH.isLoggedIn()) {
+      window.location.href = "login.html";
+    }
+
+    const user = AUTH.getCurrentUser();
+    if (user) {
+      const initials = user.displayName.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
+      document.getElementById("compose-avatar").textContent = initials;
+    }
+
+    function updateCharCount() {
+      const input = document.getElementById("compose-input");
+      const count = 500 - input.value.length;
+      const el = document.getElementById("char-count");
+      el.textContent = count;
+      el.classList.toggle("warn", count < 50);
+      document.getElementById("post-btn").disabled = input.value.trim().length === 0;
+    }
+
+    function createPost() {
+      const input = document.getElementById("compose-input");
+      if (FEED.addPost(input.value)) {
+        input.value = "";
+        updateCharCount();
+        renderFeed();
+      }
+    }
+
+    function renderFeed() {
+      const posts = FEED.getPosts();
+      const container = document.getElementById("feed-posts");
+      const currentUser = AUTH.getCurrentUser();
+
+      if (posts.length === 0) {
+        container.innerHTML = '<div class="empty-feed"><div class="emoji">&#127756;</div><p>The feed is empty.<br>Be the first to post something!</p></div>';
+        return;
+      }
+
+      container.innerHTML = posts.map(post => {
+        const initials = post.displayName.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
+        const isLiked = currentUser && post.likes.includes(currentUser.username);
+        const isOwner = currentUser && post.username === currentUser.username;
+
+        let commentsHtml = "";
+        if (post.comments && post.comments.length > 0) {
+          commentsHtml = post.comments.map(c => {
+            const cInitials = c.displayName.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
+            return `<div class="comment">
+              <div class="comment-avatar">${cInitials}</div>
+              <div class="comment-body">
+                <div class="comment-author">${escapeHtml(c.displayName)}</div>
+                <div class="comment-text">${escapeHtml(c.content)}</div>
+                <div class="comment-time">${FEED.timeAgo(c.timestamp)}</div>
+              </div>
+            </div>`;
+          }).join("");
+        }
+
+        return `<div class="post">
+          <div class="post-header">
+            <div class="post-avatar">${initials}</div>
+            <div class="post-author-info">
+              <span class="post-author">${escapeHtml(post.displayName)}</span>
+              ${post.crew ? `<span class="post-crew-tag">${escapeHtml(post.crew)}</span>` : ""}
+              <div class="post-meta">@${escapeHtml(post.username)} &middot; ${FEED.timeAgo(post.timestamp)}</div>
+            </div>
+          </div>
+          <div class="post-content">${escapeHtml(post.content)}</div>
+          <div class="post-actions">
+            <button class="post-action ${isLiked ? 'liked' : ''}" onclick="likePost('${post.id}')">
+              ${isLiked ? '&#9829;' : '&#9825;'} ${post.likes.length}
+            </button>
+            <button class="post-action" onclick="toggleComments('${post.id}')">
+              &#128172; ${post.comments ? post.comments.length : 0}
+            </button>
+            ${isOwner ? `<button class="post-action delete-btn" onclick="deletePost('${post.id}')">&#128465; Delete</button>` : ""}
+          </div>
+          <div class="comments-section" id="comments-${post.id}" style="display:none;">
+            ${commentsHtml}
+            <div class="comment-form">
+              <input type="text" class="comment-input" id="comment-input-${post.id}" placeholder="Write a comment..." onkeydown="if(event.key==='Enter')submitComment('${post.id}')">
+              <button class="comment-submit" onclick="submitComment('${post.id}')">Reply</button>
+            </div>
+          </div>
+        </div>`;
+      }).join("");
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement("div");
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function likePost(id) {
+      FEED.toggleLike(id);
+      renderFeed();
+    }
+
+    function deletePost(id) {
+      FEED.deletePost(id);
+      renderFeed();
+    }
+
+    function toggleComments(id) {
+      const el = document.getElementById("comments-" + id);
+      el.style.display = el.style.display === "none" ? "block" : "none";
+    }
+
+    function submitComment(postId) {
+      const input = document.getElementById("comment-input-" + postId);
+      if (FEED.addComment(postId, input.value)) {
+        input.value = "";
+        renderFeed();
+        // Re-show comments
+        document.getElementById("comments-" + postId).style.display = "block";
+      }
+    }
+
+    renderFeed();
+  </script>
+
+  <script>
+    (function() {
+      const canvas = document.getElementById("starfield-canvas");
+      const ctx = canvas.getContext("2d");
+      let width, height, stars;
+      const STAR_COUNT = 300, SPEED = 0.35;
+      function init() { width=canvas.width=window.innerWidth; height=canvas.height=window.innerHeight; stars=[]; for(let i=0;i<STAR_COUNT;i++) stars.push(createStar(true)); }
+      function createStar(rz) { return { x:(Math.random()-0.5)*width*2, y:(Math.random()-0.5)*height*2, z:rz?Math.random()*1000:1000, size:Math.random()*1.5+0.5, twinkle:Math.random()*Math.PI*2, twinkleSpeed:Math.random()*0.02+0.005, color:Math.random()>0.85?`hsl(${Math.floor(Math.random()*60+200)},60%,80%)`:"#fff" }; }
+      function animate() { ctx.fillStyle="rgba(2,8,16,0.85)"; ctx.fillRect(0,0,width,height); const cx=width/2,cy=height/2; for(let i=0;i<stars.length;i++){const s=stars[i];s.z-=SPEED;s.twinkle+=s.twinkleSpeed;if(s.z<=0){stars[i]=createStar(false);continue;}const sx=(s.x/s.z)*200+cx,sy=(s.y/s.z)*200+cy;if(sx<-50||sx>width+50||sy<-50||sy>height+50){stars[i]=createStar(false);continue;}const scale=(1000-s.z)/1000,r=s.size*scale*2,alpha=scale*(0.6+0.4*Math.sin(s.twinkle));ctx.beginPath();ctx.arc(sx,sy,Math.max(r,0.3),0,Math.PI*2);ctx.fillStyle=s.color;ctx.globalAlpha=alpha;ctx.fill();if(r>1.2){ctx.beginPath();ctx.arc(sx,sy,r*2.5,0,Math.PI*2);ctx.globalAlpha=alpha*0.1;ctx.fill();}} ctx.globalAlpha=1;requestAnimationFrame(animate); }
+      init(); animate();
+      window.addEventListener("resize",()=>{width=canvas.width=window.innerWidth;height=canvas.height=window.innerHeight;});
+    })();
+  </script>
+</body>
+</html>
