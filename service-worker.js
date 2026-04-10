@@ -1,17 +1,18 @@
-const CACHE_NAME = "bret-siers-v2";
+const CACHE_NAME = "bret-siers-v3";
+const BASE = "/bretsiers.github.io/";
 const ASSETS = [
-  "/",
-  "/index.html",
-  "/manifest.json",
-  "/profile.jpg",
-  "/New Beginning.mp3",
-  "/Step Toward Home.mp3",
-  "/Day After Day.mp3",
-  "/Life Like Easter.mp3",
-  "/Stars in the Sky.mp3",
-  "/People.mp3",
-  "/Hope in the Rain.mp3",
-  "/Bucket List.mp3"
+  BASE,
+  BASE + "index.html",
+  BASE + "manifest.json",
+  BASE + "profile.jpg",
+  BASE + "New Beginning.mp3",
+  BASE + "Step Toward Home.mp3",
+  BASE + "Day After Day.mp3",
+  BASE + "Life Like Easter.mp3",
+  BASE + "Stars in the Sky.mp3",
+  BASE + "People.mp3",
+  BASE + "Hope in the Rain.mp3",
+  BASE + "Bucket List.mp3"
 ];
 
 self.addEventListener("install", event => {

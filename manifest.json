@@ -2,8 +2,8 @@
   "name": "Bret Siers Music",
   "short_name": "Bret Siers",
   "description": "Independent AI music creator exploring the intersection of technology and emotion.",
-  "start_url": "/",
-  "scope": "/",
+  "start_url": "/bretsiers.github.io/",
+  "scope": "/bretsiers.github.io/",
   "display": "standalone",
   "background_color": "#0b1a3b",
   "theme_color": "#c0a060",
@@ -13,13 +13,13 @@
       "name": "Finding Home",
       "short_name": "Finding Home",
       "description": "Play the Finding Home album",
-      "url": "/"
+      "url": "/bretsiers.github.io/"
     },
     {
       "name": "Different Not Less",
       "short_name": "Diff Not Less",
       "description": "Play the Different Not Less album",
-      "url": "/"
+      "url": "/bretsiers.github.io/"
     }
   ],
   "icons": [
