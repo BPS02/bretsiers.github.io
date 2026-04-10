@@ -522,17 +522,8 @@
       <div class="members-list" id="members-list"></div>
     </div>
 
-    <div class="join-section">
-      <h3>Sign Up</h3>
-      <div class="join-form" id="join-form">
-        <p class="selected-crew" id="selected-crew-label">Select a crew above to get started</p>
-        <input type="text" id="join-name" placeholder="Your name" disabled>
-        <input type="email" id="join-email" placeholder="Your email" disabled>
-        <button class="join-btn" id="join-btn" onclick="submitJoin()" disabled>Join the Crew</button>
-      </div>
-      <div class="join-success" id="join-success">
-        Welcome to the crew! We'll be in touch soon.
-      </div>
+    <div class="join-section" id="join-section">
+      <p style="color:#999; font-size:0.95em;">Select a crew above to see its members</p>
     </div>
   </div>
 
@@ -544,19 +535,43 @@
   <script src="auth.js"></script>
   <script>
     let selectedCrew = null;
+    const currentUser = AUTH.getCurrentUser();
+
+    const crewNames = {
+      'creators': 'Content Creators',
+      'streamers': 'Streamers',
+      'advantage': 'Advantage',
+      'events': 'Events',
+      'teachers': 'Teachers',
+      'jobs': 'Jobs'
+    };
 
     function selectCrew(card, name) {
       document.querySelectorAll(".crew-card").forEach(c => c.classList.remove("selected"));
       card.classList.add("selected");
       selectedCrew = name;
 
-      document.getElementById("selected-crew-label").textContent = "Joining: " + name;
-      document.getElementById("join-name").disabled = false;
-      document.getElementById("join-email").disabled = false;
-      document.getElementById("join-btn").disabled = false;
-
       // Show members panel
       showMembers(name);
+
+      // Update join section based on login state
+      const joinSection = document.getElementById("join-section");
+      if (currentUser) {
+        if (currentUser.crew === name) {
+          joinSection.innerHTML = '<p style="color:#2ecc71; font-size:0.95em; letter-spacing:1px;">You are a member of ' + escapeHtml(name) + '!</p>';
+        } else {
+          joinSection.innerHTML = '<button class="join-btn" onclick="switchCrew(\'' + escapeHtml(name) + '\')">Join ' + escapeHtml(name) + '</button>';
+        }
+      } else {
+        joinSection.innerHTML = '<p style="color:#999; font-size:0.95em; margin-bottom:16px;">Sign up to join a crew</p><a class="join-btn" href="login.html" style="text-decoration:none; display:inline-block;">Sign Up / Login</a>';
+      }
+    }
+
+    function switchCrew(name) {
+      if (currentUser) {
+        AUTH.updateProfile({ crew: name });
+        location.reload();
+      }
     }
 
     function showMembers(crewName) {
@@ -576,10 +591,11 @@
         list.innerHTML = members.map(m => {
           const initials = m.displayName.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
           const joined = new Date(m.joinedDate).toLocaleDateString("en-US", { month: "short", year: "numeric" });
-          return `<div class="member-item">
+          const isYou = currentUser && m.username === currentUser.username;
+          return `<div class="member-item" style="${isYou ? 'border-color: rgba(192,160,96,0.4);' : ''}">
             <div class="member-avatar">${initials}</div>
             <div class="member-details">
-              <div class="member-name">${escapeHtml(m.displayName)}</div>
+              <div class="member-name">${escapeHtml(m.displayName)} ${isYou ? '<span style="color:#c0a060; font-size:0.8em;">(you)</span>' : ''}</div>
               <div class="member-username">@${escapeHtml(m.username)}</div>
               ${m.bio ? `<div class="member-bio">${escapeHtml(m.bio)}</div>` : ""}
             </div>
@@ -602,41 +618,8 @@
       return div.innerHTML;
     }
 
-    function submitJoin() {
-      const name = document.getElementById("join-name").value;
-      const email = document.getElementById("join-email").value;
-
-      if (!name || !email || !email.includes("@") || !selectedCrew) {
-        return;
-      }
-
-      fetch("https://formspree.io/f/xdaprkyq", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Accept": "application/json" },
-        body: JSON.stringify({ name: name, email: email, crew: selectedCrew })
-      })
-      .then(res => {
-        if (res.ok) {
-          document.getElementById("join-form").style.display = "none";
-          document.getElementById("join-success").style.display = "block";
-          updateCrewCounts();
-        } else {
-          alert("Something went wrong. Please try again.");
-        }
-      })
-      .catch(() => alert("Something went wrong. Please try again."));
-    }
-
     function updateCrewCounts() {
       const users = JSON.parse(localStorage.getItem("bsm_users") || "{}");
-      const crewNames = {
-        'creators': 'Content Creators',
-        'streamers': 'Streamers',
-        'advantage': 'Advantage',
-        'events': 'Events',
-        'teachers': 'Teachers',
-        'jobs': 'Jobs'
-      };
 
       Object.keys(crewNames).forEach(key => {
         const el = document.getElementById("count-" + key);
@@ -647,7 +630,20 @@
       });
     }
 
+    // On page load: update counts and auto-select user's crew
     updateCrewCounts();
+
+    if (currentUser && currentUser.crew) {
+      // Find and click the user's crew card
+      const cardMap = {};
+      document.querySelectorAll(".crew-card").forEach(card => {
+        const h2 = card.querySelector("h2");
+        if (h2) cardMap[h2.textContent] = card;
+      });
+      if (cardMap[currentUser.crew]) {
+        selectCrew(cardMap[currentUser.crew], currentUser.crew);
+      }
+    }
   </script>
 
   <!-- STARFIELD ANIMATION -->
