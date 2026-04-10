@@ -1,12 +1,27 @@
 {
-  "name": "Bret Siers — Music",
+  "name": "Bret Siers Music",
   "short_name": "Bret Siers",
   "description": "Independent AI music creator exploring the intersection of technology and emotion.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#0b1a3b",
   "theme_color": "#c0a060",
   "orientation": "portrait-primary",
+  "shortcuts": [
+    {
+      "name": "Finding Home",
+      "short_name": "Finding Home",
+      "description": "Play the Finding Home album",
+      "url": "/"
+    },
+    {
+      "name": "Different Not Less",
+      "short_name": "Diff Not Less",
+      "description": "Play the Different Not Less album",
+      "url": "/"
+    }
+  ],
   "icons": [
     {
       "src": "profile.jpg",
