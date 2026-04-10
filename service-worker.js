@@ -1,4 +1,4 @@
-const CACHE_NAME = "bret-siers-v1";
+const CACHE_NAME = "bret-siers-v2";
 const ASSETS = [
   "/",
   "/index.html",
@@ -7,7 +7,11 @@ const ASSETS = [
   "/New Beginning.mp3",
   "/Step Toward Home.mp3",
   "/Day After Day.mp3",
-  "/Life Like Easter.mp3"
+  "/Life Like Easter.mp3",
+  "/Stars in the Sky.mp3",
+  "/People.mp3",
+  "/Hope in the Rain.mp3",
+  "/Bucket List.mp3"
 ];
 
 self.addEventListener("install", event => {
