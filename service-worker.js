@@ -1,4 +1,4 @@
-const CACHE_NAME = "bret-siers-v7";
+const CACHE_NAME = "bret-siers-v8";
 const BASE = "/bretsiers.github.io/";
 const ASSETS = [
   BASE,
@@ -18,7 +18,8 @@ const ASSETS = [
   BASE + "login.html",
   BASE + "profile.html",
   BASE + "feed.html",
-  BASE + "auth.js"
+  BASE + "auth.js",
+  BASE + "firebase-config.js"
 ];
 
 self.addEventListener("install", event => {

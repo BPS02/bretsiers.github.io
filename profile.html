@@ -311,14 +311,22 @@
     </div>
   </div>
 
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
   <script src="auth.js"></script>
   <script>
-    if (!AUTH.isLoggedIn()) {
-      window.location.href = "login.html";
-    }
+    AUTH.onReady(async (user, profile) => {
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+      await loadProfile();
+    });
 
-    function loadProfile() {
-      const user = AUTH.getCurrentUser();
+    async function loadProfile() {
+      const user = AUTH.userProfile;
       if (!user) return;
 
       const initials = user.displayName.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 3);
@@ -330,9 +338,10 @@
       document.getElementById("profile-bio").textContent = user.bio || "No bio yet...";
       document.getElementById("profile-date").textContent = "Joined " + new Date(user.joinedDate).toLocaleDateString("en-US", { month: "long", year: "numeric" });
 
-      // Count posts
-      const posts = FEED.getPosts().filter(p => p.username === user.username);
-      document.getElementById("stat-posts").textContent = posts.length;
+      // Count posts from Firestore
+      const posts = await FEED.getPosts();
+      const myPosts = posts.filter(p => p.uid === auth.currentUser.uid);
+      document.getElementById("stat-posts").textContent = myPosts.length;
 
       // Fill edit form
       document.getElementById("edit-name").value = user.displayName;
@@ -340,13 +349,13 @@
       document.getElementById("edit-crew").value = user.crew || "";
     }
 
-    function saveProfile(e) {
+    async function saveProfile(e) {
       e.preventDefault();
       const name = document.getElementById("edit-name").value;
       const bio = document.getElementById("edit-bio").value;
       const crew = document.getElementById("edit-crew").value;
 
-      AUTH.updateProfile({
+      await AUTH.updateProfile({
         displayName: name,
         bio: bio,
         crew: crew
@@ -354,10 +363,8 @@
 
       document.getElementById("save-msg").textContent = "Profile saved!";
       setTimeout(() => document.getElementById("save-msg").textContent = "", 2000);
-      loadProfile();
+      await loadProfile();
     }
-
-    loadProfile();
   </script>
 
   <script>

@@ -213,7 +213,7 @@
     </div>
 
     <form class="auth-form" onsubmit="handleSubmit(event)">
-      <input type="text" id="username" placeholder="Username" autocomplete="username" required>
+      <input type="email" id="email" placeholder="Email" autocomplete="email" required>
       <input type="password" id="password" placeholder="Password" autocomplete="current-password" required>
 
       <div class="signup-fields" id="signup-fields">
@@ -238,12 +238,16 @@
     </p>
   </div>
 
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
   <script src="auth.js"></script>
   <script>
     // Redirect if already logged in
-    if (AUTH.isLoggedIn()) {
-      window.location.href = "feed.html";
-    }
+    AUTH.onReady((user) => {
+      if (user) window.location.href = "feed.html";
+    });
 
     let mode = "login";
 
@@ -260,27 +264,34 @@
       document.getElementById("auth-error").textContent = "";
     }
 
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
       e.preventDefault();
-      const username = document.getElementById("username").value;
+      const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
       const errorEl = document.getElementById("auth-error");
+      const btn = document.getElementById("auth-btn");
+      btn.disabled = true;
+      btn.textContent = "Please wait...";
 
       if (mode === "login") {
-        const result = AUTH.login(username, password);
+        const result = await AUTH.login(email, password);
         if (result.success) {
           window.location.href = "feed.html";
         } else {
           errorEl.textContent = result.error;
+          btn.disabled = false;
+          btn.textContent = "Login";
         }
       } else {
-        const displayName = document.getElementById("displayName").value || username;
+        const displayName = document.getElementById("displayName").value || email.split("@")[0];
         const crew = document.getElementById("crewSelect").value;
-        const result = AUTH.signup(username, password, displayName, crew);
+        const result = await AUTH.signup(email, password, displayName, crew);
         if (result.success) {
           window.location.href = "profile.html";
         } else {
           errorEl.textContent = result.error;
+          btn.disabled = false;
+          btn.textContent = "Create Account";
         }
       }
     }

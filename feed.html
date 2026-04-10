@@ -354,17 +354,23 @@
     <div id="feed-posts"></div>
   </div>
 
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
   <script src="auth.js"></script>
   <script>
-    if (!AUTH.isLoggedIn()) {
-      window.location.href = "login.html";
-    }
-
-    const user = AUTH.getCurrentUser();
-    if (user) {
-      const initials = user.displayName.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
-      document.getElementById("compose-avatar").textContent = initials;
-    }
+    AUTH.onReady((user, profile) => {
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+      if (profile) {
+        const initials = profile.displayName.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
+        document.getElementById("compose-avatar").textContent = initials;
+      }
+      renderFeed();
+    });
 
     function updateCharCount() {
       const input = document.getElementById("compose-input");
@@ -375,19 +381,20 @@
       document.getElementById("post-btn").disabled = input.value.trim().length === 0;
     }
 
-    function createPost() {
+    async function createPost() {
       const input = document.getElementById("compose-input");
-      if (FEED.addPost(input.value)) {
-        input.value = "";
-        updateCharCount();
-        renderFeed();
-      }
+      const btn = document.getElementById("post-btn");
+      btn.disabled = true;
+      await FEED.addPost(input.value);
+      input.value = "";
+      updateCharCount();
+      await renderFeed();
     }
 
-    function renderFeed() {
-      const posts = FEED.getPosts();
+    async function renderFeed() {
+      const posts = await FEED.getPosts();
       const container = document.getElementById("feed-posts");
-      const currentUser = AUTH.getCurrentUser();
+      const uid = auth.currentUser ? auth.currentUser.uid : null;
 
       if (posts.length === 0) {
         container.innerHTML = '<div class="empty-feed"><div class="emoji">&#127756;</div><p>The feed is empty.<br>Be the first to post something!</p></div>';
@@ -395,18 +402,20 @@
       }
 
       container.innerHTML = posts.map(post => {
-        const initials = post.displayName.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
-        const isLiked = currentUser && post.likes.includes(currentUser.username);
-        const isOwner = currentUser && post.username === currentUser.username;
+        const initials = post.displayName ? post.displayName.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2) : "?";
+        const likes = post.likes || [];
+        const isLiked = uid && likes.includes(uid);
+        const isOwner = uid && post.uid === uid;
+        const comments = post.comments || [];
 
         let commentsHtml = "";
-        if (post.comments && post.comments.length > 0) {
-          commentsHtml = post.comments.map(c => {
-            const cInitials = c.displayName.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
+        if (comments.length > 0) {
+          commentsHtml = comments.map(c => {
+            const cInitials = c.displayName ? c.displayName.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2) : "?";
             return `<div class="comment">
               <div class="comment-avatar">${cInitials}</div>
               <div class="comment-body">
-                <div class="comment-author">${escapeHtml(c.displayName)}</div>
+                <div class="comment-author">${escapeHtml(c.displayName || '')}</div>
                 <div class="comment-text">${escapeHtml(c.content)}</div>
                 <div class="comment-time">${FEED.timeAgo(c.timestamp)}</div>
               </div>
@@ -418,18 +427,18 @@
           <div class="post-header">
             <div class="post-avatar">${initials}</div>
             <div class="post-author-info">
-              <span class="post-author">${escapeHtml(post.displayName)}</span>
+              <span class="post-author">${escapeHtml(post.displayName || '')}</span>
               ${post.crew ? `<span class="post-crew-tag">${escapeHtml(post.crew)}</span>` : ""}
-              <div class="post-meta">@${escapeHtml(post.username)} &middot; ${FEED.timeAgo(post.timestamp)}</div>
+              <div class="post-meta">@${escapeHtml(post.username || '')} &middot; ${FEED.timeAgo(post.timestamp)}</div>
             </div>
           </div>
           <div class="post-content">${escapeHtml(post.content)}</div>
           <div class="post-actions">
             <button class="post-action ${isLiked ? 'liked' : ''}" onclick="likePost('${post.id}')">
-              ${isLiked ? '&#9829;' : '&#9825;'} ${post.likes.length}
+              ${isLiked ? '&#9829;' : '&#9825;'} ${likes.length}
             </button>
             <button class="post-action" onclick="toggleComments('${post.id}')">
-              &#128172; ${post.comments ? post.comments.length : 0}
+              &#128172; ${comments.length}
             </button>
             ${isOwner ? `<button class="post-action delete-btn" onclick="deletePost('${post.id}')">&#128465; Delete</button>` : ""}
           </div>
@@ -450,14 +459,14 @@
       return div.innerHTML;
     }
 
-    function likePost(id) {
-      FEED.toggleLike(id);
-      renderFeed();
+    async function likePost(id) {
+      await FEED.toggleLike(id);
+      await renderFeed();
     }
 
-    function deletePost(id) {
-      FEED.deletePost(id);
-      renderFeed();
+    async function deletePost(id) {
+      await FEED.deletePost(id);
+      await renderFeed();
     }
 
     function toggleComments(id) {
@@ -465,17 +474,13 @@
       el.style.display = el.style.display === "none" ? "block" : "none";
     }
 
-    function submitComment(postId) {
+    async function submitComment(postId) {
       const input = document.getElementById("comment-input-" + postId);
-      if (FEED.addComment(postId, input.value)) {
-        input.value = "";
-        renderFeed();
-        // Re-show comments
-        document.getElementById("comments-" + postId).style.display = "block";
-      }
+      await FEED.addComment(postId, input.value);
+      input.value = "";
+      await renderFeed();
+      document.getElementById("comments-" + postId).style.display = "block";
     }
-
-    renderFeed();
   </script>
 
   <script>

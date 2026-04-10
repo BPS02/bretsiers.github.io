@@ -1,153 +1,149 @@
-// Auth system using localStorage
+// Auth system using Firebase
 const AUTH = {
-  getUsers() {
-    return JSON.parse(localStorage.getItem("bsm_users") || "{}");
-  },
+  currentUser: null,
+  userProfile: null,
 
-  saveUsers(users) {
-    localStorage.setItem("bsm_users", JSON.stringify(users));
-  },
-
-  getCurrentUser() {
-    const username = localStorage.getItem("bsm_currentUser");
-    if (!username) return null;
-    const users = this.getUsers();
-    return users[username] || null;
+  // Wait for Firebase auth state
+  onReady(callback) {
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        AUTH.currentUser = user;
+        const doc = await db.collection("users").doc(user.uid).get();
+        AUTH.userProfile = doc.exists ? doc.data() : null;
+      } else {
+        AUTH.currentUser = null;
+        AUTH.userProfile = null;
+      }
+      callback(AUTH.currentUser, AUTH.userProfile);
+    });
   },
 
   isLoggedIn() {
-    return !!localStorage.getItem("bsm_currentUser");
+    return !!auth.currentUser;
   },
 
-  signup(username, password, displayName, crew) {
-    const users = this.getUsers();
-    if (users[username.toLowerCase()]) {
-      return { success: false, error: "Username already taken" };
-    }
-    if (username.length < 3) {
-      return { success: false, error: "Username must be at least 3 characters" };
-    }
-    if (password.length < 6) {
-      return { success: false, error: "Password must be at least 6 characters" };
-    }
-
-    users[username.toLowerCase()] = {
-      username: username.toLowerCase(),
-      displayName: displayName || username,
-      password: password,
-      crew: crew || "",
-      bio: "",
-      avatar: "",
-      joinedDate: new Date().toISOString(),
-      following: [],
-      followers: []
-    };
-
-    this.saveUsers(users);
-    localStorage.setItem("bsm_currentUser", username.toLowerCase());
-    return { success: true };
+  getCurrentUser() {
+    return AUTH.userProfile;
   },
 
-  login(username, password) {
-    const users = this.getUsers();
-    const user = users[username.toLowerCase()];
-    if (!user) {
-      return { success: false, error: "User not found" };
+  async signup(email, password, displayName, crew) {
+    try {
+      const cred = await auth.createUserWithEmailAndPassword(email, password);
+      const username = email.split("@")[0].toLowerCase();
+      const profile = {
+        uid: cred.user.uid,
+        email: email,
+        username: username,
+        displayName: displayName || username,
+        crew: crew || "",
+        bio: "",
+        joinedDate: new Date().toISOString()
+      };
+      await db.collection("users").doc(cred.user.uid).set(profile);
+      AUTH.userProfile = profile;
+      return { success: true };
+    } catch (e) {
+      let error = e.message;
+      if (e.code === "auth/email-already-in-use") error = "Email already in use";
+      if (e.code === "auth/weak-password") error = "Password must be at least 6 characters";
+      if (e.code === "auth/invalid-email") error = "Invalid email address";
+      return { success: false, error: error };
     }
-    if (user.password !== password) {
-      return { success: false, error: "Incorrect password" };
-    }
-    localStorage.setItem("bsm_currentUser", username.toLowerCase());
-    return { success: true };
   },
 
-  logout() {
-    localStorage.removeItem("bsm_currentUser");
+  async login(email, password) {
+    try {
+      await auth.signInWithEmailAndPassword(email, password);
+      return { success: true };
+    } catch (e) {
+      let error = e.message;
+      if (e.code === "auth/user-not-found") error = "No account found with this email";
+      if (e.code === "auth/wrong-password") error = "Incorrect password";
+      if (e.code === "auth/invalid-email") error = "Invalid email address";
+      if (e.code === "auth/invalid-credential") error = "Incorrect email or password";
+      return { success: false, error: error };
+    }
+  },
+
+  async logout() {
+    await auth.signOut();
     window.location.href = "login.html";
   },
 
-  updateProfile(updates) {
-    const username = localStorage.getItem("bsm_currentUser");
-    if (!username) return false;
-    const users = this.getUsers();
-    if (!users[username]) return false;
-    Object.assign(users[username], updates);
-    this.saveUsers(users);
+  async updateProfile(updates) {
+    if (!auth.currentUser) return false;
+    await db.collection("users").doc(auth.currentUser.uid).update(updates);
+    Object.assign(AUTH.userProfile, updates);
     return true;
   }
 };
 
-// Feed system
+// Feed system using Firestore
 const FEED = {
-  getPosts() {
-    return JSON.parse(localStorage.getItem("bsm_posts") || "[]");
+  async getPosts() {
+    const snapshot = await db.collection("posts").orderBy("timestamp", "desc").limit(50).get();
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
   },
 
-  savePosts(posts) {
-    localStorage.setItem("bsm_posts", JSON.stringify(posts));
-  },
-
-  addPost(content) {
-    const user = AUTH.getCurrentUser();
-    if (!user || !content.trim()) return false;
-    const posts = this.getPosts();
-    posts.unshift({
-      id: Date.now().toString(),
-      username: user.username,
-      displayName: user.displayName,
-      crew: user.crew,
+  async addPost(content) {
+    const profile = AUTH.userProfile;
+    if (!profile || !content.trim()) return false;
+    await db.collection("posts").add({
+      uid: auth.currentUser.uid,
+      username: profile.username,
+      displayName: profile.displayName,
+      crew: profile.crew || "",
       content: content.trim(),
-      timestamp: new Date().toISOString(),
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
       likes: [],
       comments: []
     });
-    this.savePosts(posts);
     return true;
   },
 
-  toggleLike(postId) {
-    const user = AUTH.getCurrentUser();
-    if (!user) return;
-    const posts = this.getPosts();
-    const post = posts.find(p => p.id === postId);
-    if (!post) return;
-    const idx = post.likes.indexOf(user.username);
-    if (idx === -1) {
-      post.likes.push(user.username);
+  async toggleLike(postId) {
+    if (!auth.currentUser) return;
+    const uid = auth.currentUser.uid;
+    const ref = db.collection("posts").doc(postId);
+    const doc = await ref.get();
+    if (!doc.exists) return;
+    const likes = doc.data().likes || [];
+    if (likes.includes(uid)) {
+      await ref.update({ likes: firebase.firestore.FieldValue.arrayRemove(uid) });
     } else {
-      post.likes.splice(idx, 1);
+      await ref.update({ likes: firebase.firestore.FieldValue.arrayUnion(uid) });
     }
-    this.savePosts(posts);
   },
 
-  addComment(postId, content) {
-    const user = AUTH.getCurrentUser();
-    if (!user || !content.trim()) return false;
-    const posts = this.getPosts();
-    const post = posts.find(p => p.id === postId);
-    if (!post) return false;
-    post.comments.push({
-      id: Date.now().toString(),
-      username: user.username,
-      displayName: user.displayName,
-      content: content.trim(),
-      timestamp: new Date().toISOString()
+  async addComment(postId, content) {
+    const profile = AUTH.userProfile;
+    if (!profile || !content.trim()) return false;
+    const ref = db.collection("posts").doc(postId);
+    await ref.update({
+      comments: firebase.firestore.FieldValue.arrayUnion({
+        uid: auth.currentUser.uid,
+        username: profile.username,
+        displayName: profile.displayName,
+        content: content.trim(),
+        timestamp: new Date().toISOString()
+      })
     });
-    this.savePosts(posts);
     return true;
   },
 
-  deletePost(postId) {
-    const user = AUTH.getCurrentUser();
-    if (!user) return;
-    let posts = this.getPosts();
-    posts = posts.filter(p => !(p.id === postId && p.username === user.username));
-    this.savePosts(posts);
+  async deletePost(postId) {
+    if (!auth.currentUser) return;
+    const ref = db.collection("posts").doc(postId);
+    const doc = await ref.get();
+    if (doc.exists && doc.data().uid === auth.currentUser.uid) {
+      await ref.delete();
+    }
   },
 
-  timeAgo(dateStr) {
+  timeAgo(timestamp) {
+    if (!timestamp) return "just now";
+    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
     const now = new Date();
-    const date = new Date(dateStr);
     const seconds = Math.floor((now - date) / 1000);
     if (seconds < 60) return "just now";
     const minutes = Math.floor(seconds / 60);
@@ -159,3 +155,20 @@ const FEED = {
     return date.toLocaleDateString();
   }
 };
+
+// Helper to get all crew members
+async function getCrewMembers(crewName) {
+  const snapshot = await db.collection("users").where("crew", "==", crewName).get();
+  return snapshot.docs.map(doc => doc.data());
+}
+
+// Helper to get all crew counts
+async function getAllCrewCounts() {
+  const snapshot = await db.collection("users").get();
+  const counts = {};
+  snapshot.docs.forEach(doc => {
+    const crew = doc.data().crew;
+    if (crew) counts[crew] = (counts[crew] || 0) + 1;
+  });
+  return counts;
+}
