@@ -971,34 +971,92 @@
 
     /* MOBILE RESPONSIVE */
     @media (max-width: 768px) {
+      body { padding-bottom: 140px; }
+
+      header { padding: 40px 16px 24px; }
       header h1 { font-size: 1.8em; letter-spacing: 2px; }
-      .artist-bio { font-size: 0.9em; }
+      .artist-avatar { width: 90px; height: 90px; }
+      .artist-initials { font-size: 2em; }
+      .artist-bio { font-size: 0.85em; padding: 0 10px; }
+
+      .about-section { padding: 0 16px 20px; }
       .about-stats { gap: 20px; }
       .stat-number { font-size: 1.5em; }
-      .album-section { flex-direction: column; align-items: center; gap: 30px; }
-      .album-cover-art { width: 220px; height: 220px; }
-      .album-cover-dnl { width: 220px; height: 220px; }
-      .tracklist-album-title { font-size: 1.5em; }
+
+      .album-section {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        padding: 0 16px 40px;
+      }
+      .album-cover-art { width: 240px; height: 240px; }
+      .album-cover-dnl { width: 240px; height: 240px; }
+
+      .tracklist { width: 100%; }
+      .tracklist-album-title { font-size: 1.3em; }
+      .tracklist-album-sub { font-size: 0.7em; }
+
+      .track-row {
+        gap: 10px;
+        padding: 14px 10px;
+      }
       .track-desc { display: none; }
       .track-plays { display: none; }
-      .track-feedback-btn { font-size: 0.6em; padding: 2px 6px; }
+      .track-duration { display: none; }
+      .track-num { min-width: 18px; font-size: 0.75em; }
+      .track-title { font-size: 0.9em; }
+
+      .track-play-btn { width: 32px; height: 32px; font-size: 0.85em; }
+      .track-like-btn { padding: 4px; }
+      .track-feedback-btn { font-size: 0.65em; padding: 3px 6px; }
+      .track-download-btn { padding: 4px; }
+
+      .feedback-panel { margin: 0 6px 8px; padding: 12px; }
+      .feedback-input { font-size: 0.8em; padding: 8px 10px; }
+
       .mailing-form { flex-direction: column; align-items: center; }
       .mailing-form input { width: 100%; max-width: 300px; }
-      .sticky-player { flex-wrap: wrap; gap: 8px; padding: 10px 15px; }
-      .sticky-progress { width: 120px; }
-      .sticky-player-info { min-width: auto; }
+
+      .contact-section { padding: 0 16px 20px; }
+
+      /* STICKY PLAYER — MOBILE LAYOUT */
+      .sticky-player {
+        flex-direction: column;
+        gap: 8px;
+        padding: 10px 16px 14px;
+      }
+
+      .sticky-player-info { min-width: auto; justify-content: center; }
+      .sticky-player-title { font-size: 0.8em; }
+      .sticky-player-artist { font-size: 0.65em; }
+
+      .sticky-controls { gap: 16px; }
+      .sticky-btn { width: 40px; height: 40px; font-size: 1.1em; }
+
+      .sticky-progress { width: 100%; height: 6px; }
+      .sticky-time { font-size: 0.7em; min-width: auto; }
+
       .visualizer-container { display: none !important; }
       .volume-control { display: none; }
-      .social-links { gap: 12px; }
+
+      .social-links { gap: 10px; }
       .social-links a { font-size: 0.75em; }
+
+      footer { padding: 20px 16px; font-size: 0.7em; margin-bottom: 120px; }
     }
 
     @media (max-width: 400px) {
       header h1 { font-size: 1.4em; }
+      header { padding: 30px 12px 20px; }
+      .artist-avatar { width: 70px; height: 70px; }
+      .artist-initials { font-size: 1.6em; }
       .genre-tags { gap: 6px; }
       .tag { font-size: 0.7em; padding: 3px 10px; }
-      .album-cover-art { width: 180px; height: 180px; }
-      .album-cover-dnl { width: 180px; height: 180px; }
+      .album-cover-art { width: 200px; height: 200px; }
+      .album-cover-dnl { width: 200px; height: 200px; }
+      .track-row { gap: 8px; padding: 12px 8px; }
+      .track-feedback-btn { display: none; }
+      .track-like-count { display: none; }
     }
   </style>
 </head>
