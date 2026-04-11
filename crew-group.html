@@ -391,9 +391,15 @@
       try {
         const snapshot = await db.collection('crew-posts')
           .where('crew', '==', crewName)
-          .orderBy('timestamp', 'desc')
-          .limit(50).get();
-        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          .get();
+        const posts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        // Sort newest first client-side
+        posts.sort((a, b) => {
+          const timeA = a.timestamp ? (a.timestamp.toMillis ? a.timestamp.toMillis() : new Date(a.timestamp).getTime()) : 0;
+          const timeB = b.timestamp ? (b.timestamp.toMillis ? b.timestamp.toMillis() : new Date(b.timestamp).getTime()) : 0;
+          return timeB - timeA;
+        });
+        return posts.slice(0, 50);
       } catch (e) {
         console.log('Load posts error:', e);
         return [];
@@ -485,7 +491,8 @@
         updateCharCount();
         await loadPage();
       } catch (e) {
-        alert('Could not post. Please try again.');
+        console.log('Post error:', e);
+        alert('Could not post: ' + e.message);
         btn.disabled = false;
       }
     }
