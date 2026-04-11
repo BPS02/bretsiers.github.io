@@ -516,6 +516,39 @@
 
     .track-download-btn:hover { color: #c0a060; }
 
+    .track-like-btn {
+      background: none;
+      border: none;
+      color: #383838;
+      font-size: 0.9em;
+      cursor: pointer;
+      padding: 4px 6px;
+      transition: color 0.2s;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .track-like-btn:hover { color: #e74c3c; }
+    .track-like-btn.liked { color: #e74c3c; }
+
+    .track-like-count {
+      font-size: 0.8em;
+    }
+
+    .most-played-badge {
+      background: linear-gradient(135deg, #c0a060, #e6c970);
+      color: #000;
+      font-size: 0.6em;
+      font-weight: bold;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 10px;
+      margin-left: 8px;
+    }
+
     audio.hidden-audio { display: none; }
 
     .play-all-btn {
@@ -932,6 +965,7 @@
         <span class="track-plays" id="plays-1">0 plays</span>
         <span class="track-duration" id="duration-1">--:--</span>
         <button class="track-play-btn" id="play-btn-1">&#9654;</button>
+        <button class="track-like-btn" id="like-btn-1" onclick="event.stopPropagation(); toggleTrackLike(1)" title="Like"><span>&#9825;</span><span class="track-like-count" id="like-count-1">0</span></button>
         <button class="track-download-btn" onclick="event.stopPropagation(); downloadSong('New Beginning.mp3', 'New Beginning.mp3')" title="Download">&#11015;</button>
       </div>
       <audio id="audio-1" class="hidden-audio">
@@ -947,6 +981,7 @@
         <span class="track-plays" id="plays-2">0 plays</span>
         <span class="track-duration" id="duration-2">--:--</span>
         <button class="track-play-btn" id="play-btn-2">&#9654;</button>
+        <button class="track-like-btn" id="like-btn-2" onclick="event.stopPropagation(); toggleTrackLike(2)" title="Like"><span>&#9825;</span><span class="track-like-count" id="like-count-2">0</span></button>
         <button class="track-download-btn" onclick="event.stopPropagation(); downloadSong('Step Toward Home.mp3', 'Step Toward Home.mp3')" title="Download">&#11015;</button>
       </div>
       <audio id="audio-2" class="hidden-audio">
@@ -962,6 +997,7 @@
         <span class="track-plays" id="plays-3">0 plays</span>
         <span class="track-duration" id="duration-3">--:--</span>
         <button class="track-play-btn" id="play-btn-3">&#9654;</button>
+        <button class="track-like-btn" id="like-btn-3" onclick="event.stopPropagation(); toggleTrackLike(3)" title="Like"><span>&#9825;</span><span class="track-like-count" id="like-count-3">0</span></button>
         <button class="track-download-btn" onclick="event.stopPropagation(); downloadSong('Day After Day.mp3', 'Day After Day.mp3')" title="Download">&#11015;</button>
       </div>
       <audio id="audio-3" class="hidden-audio">
@@ -977,6 +1013,7 @@
         <span class="track-plays" id="plays-4">0 plays</span>
         <span class="track-duration" id="duration-4">--:--</span>
         <button class="track-play-btn" id="play-btn-4">&#9654;</button>
+        <button class="track-like-btn" id="like-btn-4" onclick="event.stopPropagation(); toggleTrackLike(4)" title="Like"><span>&#9825;</span><span class="track-like-count" id="like-count-4">0</span></button>
         <button class="track-download-btn" onclick="event.stopPropagation(); downloadSong('Life Like Easter.mp3', 'Life Like Easter.mp3')" title="Download">&#11015;</button>
       </div>
       <audio id="audio-4" class="hidden-audio">
@@ -1022,6 +1059,7 @@
         <span class="track-plays" id="plays-5">0 plays</span>
         <span class="track-duration" id="duration-5">--:--</span>
         <button class="track-play-btn" id="play-btn-5">&#9654;</button>
+        <button class="track-like-btn" id="like-btn-5" onclick="event.stopPropagation(); toggleTrackLike(5)" title="Like"><span>&#9825;</span><span class="track-like-count" id="like-count-5">0</span></button>
         <button class="track-download-btn" onclick="event.stopPropagation(); downloadSong('Stars in the Sky.mp3', 'Stars in the Sky.mp3')" title="Download">&#11015;</button>
       </div>
       <audio id="audio-5" class="hidden-audio">
@@ -1037,6 +1075,7 @@
         <span class="track-plays" id="plays-6">0 plays</span>
         <span class="track-duration" id="duration-6">--:--</span>
         <button class="track-play-btn" id="play-btn-6">&#9654;</button>
+        <button class="track-like-btn" id="like-btn-6" onclick="event.stopPropagation(); toggleTrackLike(6)" title="Like"><span>&#9825;</span><span class="track-like-count" id="like-count-6">0</span></button>
         <button class="track-download-btn" onclick="event.stopPropagation(); downloadSong('People.mp3', 'People.mp3')" title="Download">&#11015;</button>
       </div>
       <audio id="audio-6" class="hidden-audio">
@@ -1052,6 +1091,7 @@
         <span class="track-plays" id="plays-7">0 plays</span>
         <span class="track-duration" id="duration-7">--:--</span>
         <button class="track-play-btn" id="play-btn-7">&#9654;</button>
+        <button class="track-like-btn" id="like-btn-7" onclick="event.stopPropagation(); toggleTrackLike(7)" title="Like"><span>&#9825;</span><span class="track-like-count" id="like-count-7">0</span></button>
         <button class="track-download-btn" onclick="event.stopPropagation(); downloadSong('Hope in the Rain.mp3', 'Hope in the Rain.mp3')" title="Download">&#11015;</button>
       </div>
       <audio id="audio-7" class="hidden-audio">
@@ -1067,6 +1107,7 @@
         <span class="track-plays" id="plays-8">0 plays</span>
         <span class="track-duration" id="duration-8">--:--</span>
         <button class="track-play-btn" id="play-btn-8">&#9654;</button>
+        <button class="track-like-btn" id="like-btn-8" onclick="event.stopPropagation(); toggleTrackLike(8)" title="Like"><span>&#9825;</span><span class="track-like-count" id="like-count-8">0</span></button>
         <button class="track-download-btn" onclick="event.stopPropagation(); downloadSong('Bucket List.mp3', 'Bucket List.mp3')" title="Download">&#11015;</button>
       </div>
       <audio id="audio-8" class="hidden-audio">
@@ -1129,6 +1170,11 @@
     <div class="visualizer-container" id="visualizer"></div>
   </div>
 
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+
   <script>
     const audios = document.querySelectorAll("audio.hidden-audio");
     const songTitles = ["New Beginning", "Step Toward Home", "Day After Day", "Life Like Easter", "Stars in the Sky", "People", "Hope in the Rain", "Bucket List"];
@@ -1155,24 +1201,110 @@
       }
     }
 
-    // Play counts
-    function getPlayCounts() {
-      return JSON.parse(localStorage.getItem("bretSiersPlayCounts") || '{"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0}');
+    // Play counts and likes via Firebase
+    const trackIds = ["new-beginning", "step-toward-home", "day-after-day", "life-like-easter", "stars-in-the-sky", "people", "hope-in-the-rain", "bucket-list"];
+
+    async function incrementPlayCount(trackIndex) {
+      const trackId = trackIds[trackIndex];
+      const ref = db.collection("tracks").doc(trackId);
+      try {
+        await ref.set({ plays: firebase.firestore.FieldValue.increment(1) }, { merge: true });
+      } catch (e) {
+        // Fallback to localStorage if Firebase fails
+        const counts = JSON.parse(localStorage.getItem("bretSiersPlayCounts") || "{}");
+        counts[trackIndex + 1] = (counts[trackIndex + 1] || 0) + 1;
+        localStorage.setItem("bretSiersPlayCounts", JSON.stringify(counts));
+      }
+      await updatePlayCountDisplay();
     }
 
-    function savePlayCounts(counts) {
-      localStorage.setItem("bretSiersPlayCounts", JSON.stringify(counts));
-    }
-
-    function updatePlayCountDisplay() {
-      const counts = getPlayCounts();
+    async function updatePlayCountDisplay() {
       let total = 0;
+      let maxPlays = 0;
+      let maxTrack = -1;
+      const counts = {};
+
+      try {
+        const snapshot = await db.collection("tracks").get();
+        snapshot.docs.forEach(doc => {
+          const data = doc.data();
+          const idx = trackIds.indexOf(doc.id);
+          if (idx !== -1) {
+            counts[idx + 1] = data.plays || 0;
+          }
+        });
+      } catch (e) {
+        // Fallback to localStorage
+        const local = JSON.parse(localStorage.getItem("bretSiersPlayCounts") || "{}");
+        Object.assign(counts, local);
+      }
+
       for (let i = 1; i <= 8; i++) {
         const el = document.getElementById("plays-" + i);
-        if (el) el.textContent = (counts[i] || 0) + " plays";
-        total += (counts[i] || 0);
+        const c = counts[i] || 0;
+        if (el) el.textContent = c + " plays";
+        total += c;
+        if (c > maxPlays) { maxPlays = c; maxTrack = i; }
       }
       document.getElementById("total-plays").textContent = total;
+
+      // Show "Most Played" badge on top track
+      document.querySelectorAll(".most-played-badge").forEach(b => b.remove());
+      if (maxPlays > 0 && maxTrack > 0) {
+        const titleEl = document.querySelector("#card-" + maxTrack + " .track-title");
+        if (titleEl && !titleEl.querySelector(".most-played-badge")) {
+          const badge = document.createElement("span");
+          badge.className = "most-played-badge";
+          badge.textContent = "Most Played";
+          titleEl.appendChild(badge);
+        }
+      }
+    }
+
+    // Track likes
+    async function toggleTrackLike(trackNum) {
+      const trackId = trackIds[trackNum - 1];
+      const user = auth.currentUser;
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+      const ref = db.collection("tracks").doc(trackId);
+      try {
+        const doc = await ref.get();
+        const likes = doc.exists ? (doc.data().likes || []) : [];
+        if (likes.includes(user.uid)) {
+          await ref.set({ likes: firebase.firestore.FieldValue.arrayRemove(user.uid) }, { merge: true });
+        } else {
+          await ref.set({ likes: firebase.firestore.FieldValue.arrayUnion(user.uid) }, { merge: true });
+        }
+        await updateTrackLikes();
+      } catch (e) {
+        console.log("Like error:", e);
+      }
+    }
+
+    async function updateTrackLikes() {
+      const user = auth.currentUser;
+      try {
+        const snapshot = await db.collection("tracks").get();
+        snapshot.docs.forEach(doc => {
+          const data = doc.data();
+          const idx = trackIds.indexOf(doc.id);
+          if (idx === -1) return;
+          const likes = data.likes || [];
+          const btn = document.getElementById("like-btn-" + (idx + 1));
+          const countEl = document.getElementById("like-count-" + (idx + 1));
+          if (btn) {
+            const isLiked = user && likes.includes(user.uid);
+            btn.querySelector("span:first-child").innerHTML = isLiked ? "&#9829;" : "&#9825;";
+            btn.classList.toggle("liked", isLiked);
+          }
+          if (countEl) countEl.textContent = likes.length;
+        });
+      } catch (e) {
+        console.log("Likes display error:", e);
+      }
     }
 
     // Song duration display
@@ -1203,11 +1335,8 @@
           }
         });
 
-        // Update play count
-        const counts = getPlayCounts();
-        counts[i + 1] = (counts[i + 1] || 0) + 1;
-        savePlayCounts(counts);
-        updatePlayCountDisplay();
+        // Update play count in Firebase
+        incrementPlayCount(i);
 
         // Show sticky player
         document.getElementById("sticky-player").classList.add("visible");
@@ -1366,8 +1495,14 @@
         .catch(err => console.log("SW failed:", err));
     }
 
-    // Init
+    // Init — load play counts and likes from Firebase
     updatePlayCountDisplay();
+    updateTrackLikes();
+
+    // Listen for auth state to update likes
+    auth.onAuthStateChanged(() => {
+      updateTrackLikes();
+    });
   </script>
 
   <!-- STARFIELD ANIMATION -->
