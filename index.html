@@ -522,21 +522,22 @@
       background: none;
       border: none;
       color: #999;
-      font-size: 0.95em;
+      font-size: 1.3em;
       cursor: pointer;
-      padding: 4px 6px;
-      transition: color 0.2s;
+      padding: 6px 8px;
+      transition: all 0.2s;
       flex-shrink: 0;
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 5px;
+      touch-action: manipulation;
     }
 
-    .track-like-btn:hover { color: #e74c3c; }
+    .track-like-btn:hover { color: #e74c3c; transform: scale(1.15); }
     .track-like-btn.liked { color: #e74c3c; }
 
     .track-like-count {
-      font-size: 0.8em;
+      font-size: 0.65em;
       color: #bbb;
     }
 
