@@ -1350,19 +1350,23 @@
     function playTrack(index) {
       if (currentTrack === index && !audios[index].paused) {
         audios[index].pause();
-      } else {
-        // Stop all other audio first
-        audios.forEach((a, j) => {
-          if (j !== index) a.pause();
-        });
-        // Use a single shared audio element for mobile compatibility
+        return;
+      }
+
+      // Stop all other audio first
+      audios.forEach((a, j) => {
+        if (j !== index && !a.paused) a.pause();
+      });
+
+      // Small delay to let pause settle on mobile
+      setTimeout(() => {
         const playPromise = audios[index].play();
         if (playPromise !== undefined) {
           playPromise.catch(err => {
             console.log("Playback blocked:", err);
           });
         }
-      }
+      }, 50);
     }
 
     // Play counts and likes via Firebase
@@ -1587,12 +1591,15 @@
       });
     });
 
+    // Detect mobile
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
     // Audio events
     audios.forEach((audio, i) => {
       audio.addEventListener("play", () => {
         currentTrack = i;
 
-        // Update track rows
+        // Update track rows — keep it simple, no async calls here
         audios.forEach((a, j) => {
           const row = document.getElementById("card-" + (j + 1));
           const btn = document.getElementById("play-btn-" + (j + 1));
@@ -1600,14 +1607,11 @@
             row.classList.add("playing");
             btn.innerHTML = "&#9646;&#9646;";
           } else {
-            a.pause();
+            if (!a.paused) a.pause();
             row.classList.remove("playing");
             btn.innerHTML = "&#9654;";
           }
         });
-
-        // Update play count in Firebase
-        incrementPlayCount(i);
 
         // Show sticky player
         document.getElementById("sticky-player").classList.add("visible");
@@ -1615,7 +1619,11 @@
         document.getElementById("sticky-album").textContent = "Bret Siers · " + songAlbums[i];
         document.getElementById("sticky-play").innerHTML = "&#9646;&#9646;";
 
-        setupVisualizer(audio);
+        // Do Firebase and visualizer AFTER playback is stable
+        setTimeout(() => {
+          incrementPlayCount(i);
+          if (!isMobile) setupVisualizer(audio);
+        }, 500);
       });
 
       audio.addEventListener("pause", () => {

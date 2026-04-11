@@ -1,4 +1,4 @@
-const CACHE_NAME = "bret-siers-v11";
+const CACHE_NAME = "bret-siers-v12";
 const BASE = "/bretsiers.github.io/";
 const ASSETS = [
   BASE,
