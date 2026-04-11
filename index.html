@@ -539,6 +539,142 @@
       font-size: 0.8em;
     }
 
+    /* FEEDBACK BUTTON */
+    .track-feedback-btn {
+      background: none;
+      border: 1px solid #333;
+      color: #555;
+      font-size: 0.7em;
+      cursor: pointer;
+      padding: 3px 8px;
+      border-radius: 12px;
+      transition: all 0.2s;
+      flex-shrink: 0;
+      letter-spacing: 0.5px;
+      touch-action: manipulation;
+    }
+
+    .track-feedback-btn:hover {
+      color: #c0a060;
+      border-color: #c0a060;
+    }
+
+    /* FEEDBACK PANEL */
+    .feedback-panel {
+      display: none;
+      margin: 0 14px 8px;
+      padding: 16px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(192,160,96,0.15);
+      border-radius: 10px;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .feedback-panel.visible { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .feedback-panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .feedback-panel-title {
+      color: #c0a060;
+      font-size: 0.85em;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .feedback-panel-close {
+      background: none;
+      border: none;
+      color: #555;
+      font-size: 1.1em;
+      cursor: pointer;
+    }
+
+    .feedback-panel-close:hover { color: #e74c3c; }
+
+    .feedback-input-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .feedback-input {
+      flex: 1;
+      padding: 10px 14px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 0.85em;
+      font-family: inherit;
+      outline: none;
+    }
+
+    .feedback-input:focus { border-color: rgba(192,160,96,0.3); }
+    .feedback-input::placeholder { color: #444; }
+
+    .feedback-send {
+      padding: 10px 16px;
+      background: rgba(192,160,96,0.15);
+      color: #c0a060;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.8em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+      letter-spacing: 1px;
+    }
+
+    .feedback-send:hover { background: rgba(192,160,96,0.25); }
+
+    .feedback-list {
+      margin-top: 12px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .feedback-item {
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .feedback-item:last-child { border-bottom: none; }
+
+    .feedback-author {
+      font-size: 0.75em;
+      color: #c0a060;
+      font-weight: bold;
+    }
+
+    .feedback-time {
+      font-size: 0.65em;
+      color: #444;
+      margin-left: 8px;
+    }
+
+    .feedback-text {
+      font-size: 0.85em;
+      color: #999;
+      line-height: 1.5;
+      margin-top: 4px;
+    }
+
+    .feedback-empty {
+      color: #444;
+      font-size: 0.8em;
+      text-align: center;
+      padding: 10px;
+    }
+
     .most-played-badge {
       background: linear-gradient(135deg, #c0a060, #e6c970);
       color: #000;
@@ -845,6 +981,7 @@
       .tracklist-album-title { font-size: 1.5em; }
       .track-desc { display: none; }
       .track-plays { display: none; }
+      .track-feedback-btn { font-size: 0.6em; padding: 2px 6px; }
       .mailing-form { flex-direction: column; align-items: center; }
       .mailing-form input { width: 100%; max-width: 300px; }
       .sticky-player { flex-wrap: wrap; gap: 8px; padding: 10px 15px; }
@@ -967,8 +1104,10 @@
         <span class="track-duration" id="duration-1">--:--</span>
         <button class="track-play-btn" id="play-btn-1">&#9654;</button>
         <button class="track-like-btn" id="like-btn-1" onclick="event.stopPropagation(); toggleTrackLike(1)" title="Like"><span>&#9825;</span><span class="track-like-count" id="like-count-1">0</span></button>
+        <button class="track-feedback-btn" onclick="event.stopPropagation(); toggleFeedback(1)">Feedback</button>
         <button class="track-download-btn" onclick="event.stopPropagation(); downloadSong('New Beginning.mp3', 'New Beginning.mp3')" title="Download">&#11015;</button>
       </div>
+      <div class="feedback-panel" id="feedback-panel-1"></div>
       <audio id="audio-1" class="hidden-audio" preload="metadata">
         <source src="New Beginning.mp3" type="audio/mpeg">
       </audio>
@@ -983,8 +1122,10 @@
         <span class="track-duration" id="duration-2">--:--</span>
         <button class="track-play-btn" id="play-btn-2">&#9654;</button>
         <button class="track-like-btn" id="like-btn-2" onclick="event.stopPropagation(); toggleTrackLike(2)" title="Like"><span>&#9825;</span><span class="track-like-count" id="like-count-2">0</span></button>
+        <button class="track-feedback-btn" onclick="event.stopPropagation(); toggleFeedback(2)">Feedback</button>
         <button class="track-download-btn" onclick="event.stopPropagation(); downloadSong('Step Toward Home.mp3', 'Step Toward Home.mp3')" title="Download">&#11015;</button>
       </div>
+      <div class="feedback-panel" id="feedback-panel-2"></div>
       <audio id="audio-2" class="hidden-audio" preload="metadata">
         <source src="Step Toward Home.mp3" type="audio/mpeg">
       </audio>
@@ -999,8 +1140,10 @@
         <span class="track-duration" id="duration-3">--:--</span>
         <button class="track-play-btn" id="play-btn-3">&#9654;</button>
         <button class="track-like-btn" id="like-btn-3" onclick="event.stopPropagation(); toggleTrackLike(3)" title="Like"><span>&#9825;</span><span class="track-like-count" id="like-count-3">0</span></button>
+        <button class="track-feedback-btn" onclick="event.stopPropagation(); toggleFeedback(3)">Feedback</button>
         <button class="track-download-btn" onclick="event.stopPropagation(); downloadSong('Day After Day.mp3', 'Day After Day.mp3')" title="Download">&#11015;</button>
       </div>
+      <div class="feedback-panel" id="feedback-panel-3"></div>
       <audio id="audio-3" class="hidden-audio" preload="metadata">
         <source src="Day After Day.mp3" type="audio/mpeg">
       </audio>
@@ -1015,8 +1158,10 @@
         <span class="track-duration" id="duration-4">--:--</span>
         <button class="track-play-btn" id="play-btn-4">&#9654;</button>
         <button class="track-like-btn" id="like-btn-4" onclick="event.stopPropagation(); toggleTrackLike(4)" title="Like"><span>&#9825;</span><span class="track-like-count" id="like-count-4">0</span></button>
+        <button class="track-feedback-btn" onclick="event.stopPropagation(); toggleFeedback(4)">Feedback</button>
         <button class="track-download-btn" onclick="event.stopPropagation(); downloadSong('Life Like Easter.mp3', 'Life Like Easter.mp3')" title="Download">&#11015;</button>
       </div>
+      <div class="feedback-panel" id="feedback-panel-4"></div>
       <audio id="audio-4" class="hidden-audio" preload="metadata">
         <source src="Life Like Easter.mp3" type="audio/mpeg">
       </audio>
@@ -1061,8 +1206,10 @@
         <span class="track-duration" id="duration-5">--:--</span>
         <button class="track-play-btn" id="play-btn-5">&#9654;</button>
         <button class="track-like-btn" id="like-btn-5" onclick="event.stopPropagation(); toggleTrackLike(5)" title="Like"><span>&#9825;</span><span class="track-like-count" id="like-count-5">0</span></button>
+        <button class="track-feedback-btn" onclick="event.stopPropagation(); toggleFeedback(5)">Feedback</button>
         <button class="track-download-btn" onclick="event.stopPropagation(); downloadSong('Stars in the Sky.mp3', 'Stars in the Sky.mp3')" title="Download">&#11015;</button>
       </div>
+      <div class="feedback-panel" id="feedback-panel-5"></div>
       <audio id="audio-5" class="hidden-audio" preload="metadata">
         <source src="Stars in the Sky.mp3" type="audio/mpeg">
       </audio>
@@ -1077,8 +1224,10 @@
         <span class="track-duration" id="duration-6">--:--</span>
         <button class="track-play-btn" id="play-btn-6">&#9654;</button>
         <button class="track-like-btn" id="like-btn-6" onclick="event.stopPropagation(); toggleTrackLike(6)" title="Like"><span>&#9825;</span><span class="track-like-count" id="like-count-6">0</span></button>
+        <button class="track-feedback-btn" onclick="event.stopPropagation(); toggleFeedback(6)">Feedback</button>
         <button class="track-download-btn" onclick="event.stopPropagation(); downloadSong('People.mp3', 'People.mp3')" title="Download">&#11015;</button>
       </div>
+      <div class="feedback-panel" id="feedback-panel-6"></div>
       <audio id="audio-6" class="hidden-audio" preload="metadata">
         <source src="People.mp3" type="audio/mpeg">
       </audio>
@@ -1093,8 +1242,10 @@
         <span class="track-duration" id="duration-7">--:--</span>
         <button class="track-play-btn" id="play-btn-7">&#9654;</button>
         <button class="track-like-btn" id="like-btn-7" onclick="event.stopPropagation(); toggleTrackLike(7)" title="Like"><span>&#9825;</span><span class="track-like-count" id="like-count-7">0</span></button>
+        <button class="track-feedback-btn" onclick="event.stopPropagation(); toggleFeedback(7)">Feedback</button>
         <button class="track-download-btn" onclick="event.stopPropagation(); downloadSong('Hope in the Rain.mp3', 'Hope in the Rain.mp3')" title="Download">&#11015;</button>
       </div>
+      <div class="feedback-panel" id="feedback-panel-7"></div>
       <audio id="audio-7" class="hidden-audio" preload="metadata">
         <source src="Hope in the Rain.mp3" type="audio/mpeg">
       </audio>
@@ -1109,8 +1260,10 @@
         <span class="track-duration" id="duration-8">--:--</span>
         <button class="track-play-btn" id="play-btn-8">&#9654;</button>
         <button class="track-like-btn" id="like-btn-8" onclick="event.stopPropagation(); toggleTrackLike(8)" title="Like"><span>&#9825;</span><span class="track-like-count" id="like-count-8">0</span></button>
+        <button class="track-feedback-btn" onclick="event.stopPropagation(); toggleFeedback(8)">Feedback</button>
         <button class="track-download-btn" onclick="event.stopPropagation(); downloadSong('Bucket List.mp3', 'Bucket List.mp3')" title="Download">&#11015;</button>
       </div>
+      <div class="feedback-panel" id="feedback-panel-8"></div>
       <audio id="audio-8" class="hidden-audio" preload="metadata">
         <source src="Bucket List.mp3" type="audio/mpeg">
       </audio>
@@ -1315,6 +1468,113 @@
         });
       } catch (e) {
         console.log("Likes display error:", e);
+      }
+    }
+
+    // Feedback system
+    function escapeHtml(text) {
+      const div = document.createElement("div");
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function feedbackTimeAgo(dateStr) {
+      const now = new Date();
+      const date = new Date(dateStr);
+      const seconds = Math.floor((now - date) / 1000);
+      if (seconds < 60) return "just now";
+      const minutes = Math.floor(seconds / 60);
+      if (minutes < 60) return minutes + "m ago";
+      const hours = Math.floor(minutes / 60);
+      if (hours < 24) return hours + "h ago";
+      const days = Math.floor(hours / 24);
+      if (days < 30) return days + "d ago";
+      return date.toLocaleDateString();
+    }
+
+    async function toggleFeedback(trackNum) {
+      const panel = document.getElementById("feedback-panel-" + trackNum);
+
+      // Close all other panels
+      document.querySelectorAll(".feedback-panel").forEach(p => {
+        if (p.id !== "feedback-panel-" + trackNum) p.classList.remove("visible");
+      });
+
+      if (panel.classList.contains("visible")) {
+        panel.classList.remove("visible");
+        return;
+      }
+
+      await renderFeedbackPanel(trackNum);
+      panel.classList.add("visible");
+    }
+
+    async function renderFeedbackPanel(trackNum) {
+      const panel = document.getElementById("feedback-panel-" + trackNum);
+      const trackId = trackIds[trackNum - 1];
+      const songName = songTitles[trackNum - 1];
+
+      // Load existing feedback from Firestore
+      let feedbackItems = [];
+      try {
+        const snapshot = await db.collection("tracks").doc(trackId).collection("feedback")
+          .orderBy("timestamp", "desc").limit(20).get();
+        feedbackItems = snapshot.docs.map(doc => doc.data());
+      } catch (e) {
+        console.log("Feedback load error:", e);
+      }
+
+      const feedbackHtml = feedbackItems.length > 0
+        ? feedbackItems.map(f => `<div class="feedback-item">
+            <span class="feedback-author">${escapeHtml(f.displayName || 'Anonymous')}</span>
+            <span class="feedback-time">${feedbackTimeAgo(f.timestamp)}</span>
+            <div class="feedback-text">${escapeHtml(f.content)}</div>
+          </div>`).join("")
+        : '<div class="feedback-empty">No feedback yet. Be the first!</div>';
+
+      panel.innerHTML = `
+        <div class="feedback-panel-header">
+          <span class="feedback-panel-title">Feedback — ${escapeHtml(songName)}</span>
+          <button class="feedback-panel-close" onclick="toggleFeedback(${trackNum})">&times;</button>
+        </div>
+        <div class="feedback-input-row">
+          <input type="text" class="feedback-input" id="feedback-input-${trackNum}"
+            placeholder="What do you think of this track?"
+            onkeydown="if(event.key==='Enter')submitFeedback(${trackNum})">
+          <button class="feedback-send" onclick="submitFeedback(${trackNum})">Send</button>
+        </div>
+        <div class="feedback-list">${feedbackHtml}</div>
+      `;
+    }
+
+    async function submitFeedback(trackNum) {
+      const input = document.getElementById("feedback-input-" + trackNum);
+      const content = input.value.trim();
+      if (!content) return;
+
+      const trackId = trackIds[trackNum - 1];
+      const user = auth.currentUser;
+
+      let displayName = "Anonymous";
+      if (user) {
+        try {
+          const userDoc = await db.collection("users").doc(user.uid).get();
+          if (userDoc.exists) displayName = userDoc.data().displayName;
+        } catch (e) {}
+      }
+
+      try {
+        await db.collection("tracks").doc(trackId).collection("feedback").add({
+          content: content,
+          displayName: displayName,
+          uid: user ? user.uid : null,
+          timestamp: new Date().toISOString()
+        });
+        input.value = "";
+        await renderFeedbackPanel(trackNum);
+      } catch (e) {
+        console.log("Feedback submit error:", e);
+        alert("Could not submit feedback. Please try again.");
       }
     }
 
