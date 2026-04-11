@@ -94,7 +94,7 @@ const FEED = {
       displayName: profile.displayName,
       crew: profile.crew || "",
       content: content.trim(),
-      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      timestamp: new Date(),
       likes: [],
       comments: []
     });

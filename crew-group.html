@@ -484,7 +484,7 @@
           username: currentProfile.username,
           displayName: currentProfile.displayName,
           content: content,
-          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+          timestamp: new Date(),
           likes: []
         });
         input.value = '';
