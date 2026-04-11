@@ -422,6 +422,8 @@
       transition: background 0.2s;
       border: 1px solid transparent;
       margin-top: 4px;
+      -webkit-tap-highlight-color: rgba(192,160,96,0.15);
+      touch-action: manipulation;
     }
 
     .track-row:hover { background: rgba(192,160,96,0.07); }
@@ -967,7 +969,7 @@
         <button class="track-like-btn" id="like-btn-1" onclick="event.stopPropagation(); toggleTrackLike(1)" title="Like"><span>&#9825;</span><span class="track-like-count" id="like-count-1">0</span></button>
         <button class="track-download-btn" onclick="event.stopPropagation(); downloadSong('New Beginning.mp3', 'New Beginning.mp3')" title="Download">&#11015;</button>
       </div>
-      <audio id="audio-1" class="hidden-audio">
+      <audio id="audio-1" class="hidden-audio" preload="metadata">
         <source src="New Beginning.mp3" type="audio/mpeg">
       </audio>
 
@@ -983,7 +985,7 @@
         <button class="track-like-btn" id="like-btn-2" onclick="event.stopPropagation(); toggleTrackLike(2)" title="Like"><span>&#9825;</span><span class="track-like-count" id="like-count-2">0</span></button>
         <button class="track-download-btn" onclick="event.stopPropagation(); downloadSong('Step Toward Home.mp3', 'Step Toward Home.mp3')" title="Download">&#11015;</button>
       </div>
-      <audio id="audio-2" class="hidden-audio">
+      <audio id="audio-2" class="hidden-audio" preload="metadata">
         <source src="Step Toward Home.mp3" type="audio/mpeg">
       </audio>
 
@@ -999,7 +1001,7 @@
         <button class="track-like-btn" id="like-btn-3" onclick="event.stopPropagation(); toggleTrackLike(3)" title="Like"><span>&#9825;</span><span class="track-like-count" id="like-count-3">0</span></button>
         <button class="track-download-btn" onclick="event.stopPropagation(); downloadSong('Day After Day.mp3', 'Day After Day.mp3')" title="Download">&#11015;</button>
       </div>
-      <audio id="audio-3" class="hidden-audio">
+      <audio id="audio-3" class="hidden-audio" preload="metadata">
         <source src="Day After Day.mp3" type="audio/mpeg">
       </audio>
 
@@ -1015,7 +1017,7 @@
         <button class="track-like-btn" id="like-btn-4" onclick="event.stopPropagation(); toggleTrackLike(4)" title="Like"><span>&#9825;</span><span class="track-like-count" id="like-count-4">0</span></button>
         <button class="track-download-btn" onclick="event.stopPropagation(); downloadSong('Life Like Easter.mp3', 'Life Like Easter.mp3')" title="Download">&#11015;</button>
       </div>
-      <audio id="audio-4" class="hidden-audio">
+      <audio id="audio-4" class="hidden-audio" preload="metadata">
         <source src="Life Like Easter.mp3" type="audio/mpeg">
       </audio>
 
@@ -1061,7 +1063,7 @@
         <button class="track-like-btn" id="like-btn-5" onclick="event.stopPropagation(); toggleTrackLike(5)" title="Like"><span>&#9825;</span><span class="track-like-count" id="like-count-5">0</span></button>
         <button class="track-download-btn" onclick="event.stopPropagation(); downloadSong('Stars in the Sky.mp3', 'Stars in the Sky.mp3')" title="Download">&#11015;</button>
       </div>
-      <audio id="audio-5" class="hidden-audio">
+      <audio id="audio-5" class="hidden-audio" preload="metadata">
         <source src="Stars in the Sky.mp3" type="audio/mpeg">
       </audio>
 
@@ -1077,7 +1079,7 @@
         <button class="track-like-btn" id="like-btn-6" onclick="event.stopPropagation(); toggleTrackLike(6)" title="Like"><span>&#9825;</span><span class="track-like-count" id="like-count-6">0</span></button>
         <button class="track-download-btn" onclick="event.stopPropagation(); downloadSong('People.mp3', 'People.mp3')" title="Download">&#11015;</button>
       </div>
-      <audio id="audio-6" class="hidden-audio">
+      <audio id="audio-6" class="hidden-audio" preload="metadata">
         <source src="People.mp3" type="audio/mpeg">
       </audio>
 
@@ -1093,7 +1095,7 @@
         <button class="track-like-btn" id="like-btn-7" onclick="event.stopPropagation(); toggleTrackLike(7)" title="Like"><span>&#9825;</span><span class="track-like-count" id="like-count-7">0</span></button>
         <button class="track-download-btn" onclick="event.stopPropagation(); downloadSong('Hope in the Rain.mp3', 'Hope in the Rain.mp3')" title="Download">&#11015;</button>
       </div>
-      <audio id="audio-7" class="hidden-audio">
+      <audio id="audio-7" class="hidden-audio" preload="metadata">
         <source src="Hope in the Rain.mp3" type="audio/mpeg">
       </audio>
 
@@ -1109,7 +1111,7 @@
         <button class="track-like-btn" id="like-btn-8" onclick="event.stopPropagation(); toggleTrackLike(8)" title="Like"><span>&#9825;</span><span class="track-like-count" id="like-count-8">0</span></button>
         <button class="track-download-btn" onclick="event.stopPropagation(); downloadSong('Bucket List.mp3', 'Bucket List.mp3')" title="Download">&#11015;</button>
       </div>
-      <audio id="audio-8" class="hidden-audio">
+      <audio id="audio-8" class="hidden-audio" preload="metadata">
         <source src="Bucket List.mp3" type="audio/mpeg">
       </audio>
 
@@ -1196,7 +1198,17 @@
       if (currentTrack === index && !audios[index].paused) {
         audios[index].pause();
       } else {
-        audios[index].play();
+        // Stop all other audio first
+        audios.forEach((a, j) => {
+          if (j !== index) a.pause();
+        });
+        // Use a single shared audio element for mobile compatibility
+        const playPromise = audios[index].play();
+        if (playPromise !== undefined) {
+          playPromise.catch(err => {
+            console.log("Playback blocked:", err);
+          });
+        }
       }
     }
 
@@ -1360,7 +1372,16 @@
         document.getElementById("card-" + (i + 1)).classList.remove("playing");
         document.getElementById("play-btn-" + (i + 1)).innerHTML = "&#9654;";
         if (i < audios.length - 1) {
-          audios[i + 1].play();
+          const nextPlay = audios[i + 1].play();
+          if (nextPlay !== undefined) {
+            nextPlay.catch(() => {
+              // Mobile blocked auto-play, update UI to show next track ready
+              currentTrack = i + 1;
+              document.getElementById("sticky-title").textContent = songTitles[i + 1];
+              document.getElementById("sticky-album").textContent = "Bret Siers · " + songAlbums[i + 1];
+              document.getElementById("sticky-play").innerHTML = "&#9654;";
+            });
+          }
         } else {
           document.getElementById("sticky-play").innerHTML = "&#9654;";
         }
