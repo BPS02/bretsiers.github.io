@@ -463,7 +463,7 @@
 
     <div class="crew-grid">
 
-      <div class="crew-card creators" onclick="selectCrew(this, 'Content Creators')">
+      <div class="crew-card creators" onclick="goToCrew(this, 'Content Creators')">
         <span class="crew-icon">&#127909;</span>
         <h2>Content Creators</h2>
         <p>Create videos, posts, and art inspired by the music. Share your creative vision with the world.</p>
@@ -471,7 +471,7 @@
         <span class="member-label">members</span>
       </div>
 
-      <div class="crew-card streamers" onclick="selectCrew(this, 'Streamers')">
+      <div class="crew-card streamers" onclick="goToCrew(this, 'Streamers')">
         <span class="crew-icon">&#127897;</span>
         <h2>Streamers</h2>
         <p>Stream with the music. Use tracks on your channel and bring the sound to your audience live.</p>
@@ -479,7 +479,7 @@
         <span class="member-label">members</span>
       </div>
 
-      <div class="crew-card advantage" onclick="selectCrew(this, 'Advantage')">
+      <div class="crew-card advantage" onclick="goToCrew(this, 'Advantage')">
         <span class="crew-icon">&#11088;</span>
         <h2>Advantage</h2>
         <p>Get early access to new releases, exclusive content, and behind-the-scenes looks at the creative process.</p>
@@ -487,7 +487,7 @@
         <span class="member-label">members</span>
       </div>
 
-      <div class="crew-card events" onclick="selectCrew(this, 'Events')">
+      <div class="crew-card events" onclick="goToCrew(this, 'Events')">
         <span class="crew-icon">&#127914;</span>
         <h2>Events</h2>
         <p>Help organize and participate in live events, listening parties, and community meetups.</p>
@@ -495,7 +495,7 @@
         <span class="member-label">members</span>
       </div>
 
-      <div class="crew-card teachers" onclick="selectCrew(this, 'Teachers')">
+      <div class="crew-card teachers" onclick="goToCrew(this, 'Teachers')">
         <span class="crew-icon">&#128218;</span>
         <h2>Teachers</h2>
         <p>Educate and inspire. Share knowledge about AI music, production techniques, and creative tools.</p>
@@ -503,7 +503,7 @@
         <span class="member-label">members</span>
       </div>
 
-      <div class="crew-card jobs" onclick="selectCrew(this, 'Jobs')">
+      <div class="crew-card jobs" onclick="goToCrew(this, 'Jobs')">
         <span class="crew-icon">&#128188;</span>
         <h2>Jobs</h2>
         <p>Find opportunities in music, tech, and creative fields. Connect with others looking to hire or collaborate.</p>
@@ -566,6 +566,10 @@
         }
       }
     });
+
+    function goToCrew(card, name) {
+      window.location.href = 'crew-group.html?crew=' + encodeURIComponent(name);
+    }
 
     async function selectCrew(card, name) {
       document.querySelectorAll(".crew-card").forEach(c => c.classList.remove("selected"));

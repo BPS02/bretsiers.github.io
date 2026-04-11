@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crew — Bret Siers Music</title>
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <meta name="theme-color" content="#c0a060">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background-color: #020810;
+      color: #fff;
+      font-family: 'Arial', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    #starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+    #starfield canvas { display: block; width: 100%; height: 100%; }
+
+    /* NAV */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 10;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 24px;
+      background: rgba(2, 8, 16, 0.9);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      backdrop-filter: blur(10px);
+    }
+    .nav-brand { color: #c0a060; font-weight: bold; font-size: 1.1em; letter-spacing: 2px; text-decoration: none; }
+    .nav-links { display: flex; gap: 20px; align-items: center; }
+    .nav-links a { color: #bbb; text-decoration: none; font-size: 0.85em; letter-spacing: 1px; text-transform: uppercase; transition: color 0.2s; }
+    .nav-links a:hover, .nav-links a.active { color: #c0a060; }
+    .nav-links .logout-btn { color: #888; cursor: pointer; background: none; border: 1px solid #444; padding: 4px 12px; border-radius: 4px; font-size: 0.8em; letter-spacing: 1px; text-transform: uppercase; }
+    .nav-links .logout-btn:hover { color: #e74c3c; border-color: #e74c3c; }
+
+    /* GROUP HEADER */
+    .group-container {
+      position: relative; z-index: 1;
+      max-width: 700px; margin: 0 auto; padding: 70px 20px 40px;
+    }
+
+    .group-header {
+      text-align: center;
+      padding: 30px 0 20px;
+    }
+
+    .group-icon { font-size: 3em; margin-bottom: 12px; display: block; }
+
+    .group-name {
+      font-size: 2em; color: #c0a060;
+      letter-spacing: 3px; text-transform: uppercase; margin-bottom: 8px;
+    }
+
+    .group-desc {
+      color: #bbb; font-size: 0.9em; line-height: 1.7; max-width: 500px; margin: 0 auto;
+    }
+
+    .group-stats {
+      display: flex; justify-content: center; gap: 30px; margin-top: 20px;
+    }
+
+    .group-stat { text-align: center; }
+    .group-stat-num { font-size: 1.5em; font-weight: bold; color: #c0a060; }
+    .group-stat-label { font-size: 0.7em; color: #999; letter-spacing: 2px; text-transform: uppercase; }
+
+    .divider { width: 60px; height: 2px; background: #c0a060; margin: 30px auto; opacity: 0.4; }
+
+    /* MEMBERS BAR */
+    .members-bar {
+      display: flex; align-items: center; gap: 10px;
+      padding: 14px 0; margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .members-bar-label { color: #999; font-size: 0.8em; letter-spacing: 1px; text-transform: uppercase; }
+
+    .members-avatars { display: flex; gap: 0; }
+
+    .member-mini-avatar {
+      width: 30px; height: 30px; border-radius: 50%;
+      border: 2px solid #020810;
+      display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, #1a1200, #2a1f0a);
+      font-size: 0.5em; font-weight: bold; color: #c0a060;
+      margin-left: -8px;
+    }
+
+    .member-mini-avatar:first-child { margin-left: 0; }
+
+    .members-more {
+      color: #888; font-size: 0.75em; margin-left: 6px;
+    }
+
+    /* COMPOSE */
+    .compose-box {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(192,160,96,0.12);
+      border-radius: 12px; padding: 20px; margin-bottom: 24px;
+    }
+
+    .compose-top { display: flex; gap: 12px; align-items: flex-start; }
+
+    .compose-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      border: 2px solid #c0a060;
+      display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, #1a1200, #2a1f0a);
+      font-size: 0.8em; font-weight: bold; color: #c0a060; flex-shrink: 0;
+    }
+
+    .compose-input {
+      flex: 1; background: none; border: none; color: #fff;
+      font-size: 1em; font-family: inherit; resize: none; outline: none;
+      min-height: 50px; line-height: 1.6;
+    }
+    .compose-input::placeholder { color: #555; }
+
+    .compose-bottom {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 12px; padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .compose-actions { display: flex; gap: 10px; align-items: center; }
+
+    .compose-hint { color: #555; font-size: 0.75em; }
+
+    .char-count { color: #555; font-size: 0.8em; }
+    .char-count.warn { color: #e74c3c; }
+
+    .post-btn {
+      padding: 8px 24px;
+      background: linear-gradient(135deg, #c0a060, #a08040);
+      color: #000; border: none; border-radius: 6px;
+      font-size: 0.85em; font-weight: bold; letter-spacing: 1px;
+      text-transform: uppercase; cursor: pointer; transition: all 0.2s;
+    }
+    .post-btn:hover { transform: scale(1.03); box-shadow: 0 2px 12px rgba(192,160,96,0.3); }
+    .post-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    /* POSTS */
+    .post {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px; padding: 20px; margin-bottom: 16px;
+      transition: border-color 0.2s;
+    }
+    .post:hover { border-color: rgba(192,160,96,0.15); }
+
+    .post-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+
+    .post-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 2px solid #c0a060;
+      display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, #1a1200, #2a1f0a);
+      font-size: 0.7em; font-weight: bold; color: #c0a060; flex-shrink: 0;
+    }
+
+    .post-author-info { flex: 1; }
+    .post-author { font-weight: bold; font-size: 0.95em; color: #fff; }
+    .post-meta { font-size: 0.75em; color: #888; }
+
+    .post-content {
+      color: #ccc; font-size: 0.95em; line-height: 1.7;
+      margin-bottom: 14px; white-space: pre-wrap; word-wrap: break-word;
+    }
+
+    /* Embedded links/videos */
+    .post-embed {
+      margin-top: 10px; border-radius: 8px; overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .post-embed iframe {
+      width: 100%; height: 280px; border: none; display: block;
+    }
+
+    .post-embed-link {
+      display: block; padding: 12px 16px;
+      background: rgba(255,255,255,0.04);
+      color: #c0a060; text-decoration: none;
+      font-size: 0.85em; word-break: break-all;
+      transition: background 0.2s;
+    }
+    .post-embed-link:hover { background: rgba(255,255,255,0.08); }
+
+    .post-actions { display: flex; gap: 20px; align-items: center; }
+
+    .post-action {
+      background: none; border: none; color: #888;
+      font-size: 0.85em; cursor: pointer;
+      display: flex; align-items: center; gap: 5px;
+      transition: color 0.2s; padding: 4px 0;
+    }
+    .post-action:hover { color: #c0a060; }
+    .post-action.liked { color: #e74c3c; }
+    .post-action.delete-btn:hover { color: #e74c3c; }
+
+    /* EMPTY STATE */
+    .empty-feed { text-align: center; padding: 60px 20px; color: #555; }
+    .empty-feed .emoji { font-size: 3em; margin-bottom: 16px; }
+    .empty-feed p { font-size: 0.95em; line-height: 1.7; }
+
+    /* NOT A MEMBER */
+    .join-prompt {
+      text-align: center; padding: 40px 20px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(192,160,96,0.15);
+      border-radius: 12px;
+    }
+
+    .join-prompt p { color: #999; font-size: 0.95em; margin-bottom: 16px; }
+
+    .join-prompt-btn {
+      padding: 12px 30px;
+      background: linear-gradient(135deg, #c0a060, #a08040);
+      color: #000; border: none; border-radius: 8px;
+      font-size: 0.9em; font-weight: bold; letter-spacing: 2px;
+      text-transform: uppercase; cursor: pointer; transition: all 0.3s;
+    }
+    .join-prompt-btn:hover { transform: scale(1.03); box-shadow: 0 4px 20px rgba(192,160,96,0.3); }
+
+    /* FOOTER */
+    footer {
+      text-align: center; padding: 30px; color: #777;
+      font-size: 0.78em; letter-spacing: 2px; text-transform: uppercase;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      position: relative; z-index: 1;
+    }
+    footer a { color: #999; text-decoration: none; border-bottom: 1px solid #555; }
+
+    /* MOBILE */
+    @media (max-width: 768px) {
+      .nav { padding: 12px 16px; }
+      .nav-links { gap: 12px; }
+      .nav-links a { font-size: 0.75em; }
+      .group-container { padding: 60px 14px 40px; }
+      .group-name { font-size: 1.5em; letter-spacing: 2px; }
+      .group-icon { font-size: 2.5em; }
+      .compose-box { padding: 14px; }
+      .post-embed iframe { height: 200px; }
+    }
+
+    @media (max-width: 400px) {
+      .group-name { font-size: 1.2em; }
+      .members-bar { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="starfield"><canvas id="starfield-canvas"></canvas></div>
+
+  <nav class="nav">
+    <a class="nav-brand" href="index.html">BPS</a>
+    <div class="nav-links">
+      <a href="feed.html">Feed</a>
+      <a href="crew.html" class="active">Crew</a>
+      <a href="profile.html">Profile</a>
+      <button class="logout-btn" id="logout-btn" style="display:none;" onclick="AUTH.logout()">Logout</button>
+    </div>
+  </nav>
+
+  <div class="group-container">
+    <div class="group-header">
+      <span class="group-icon" id="group-icon"></span>
+      <h1 class="group-name" id="group-name">Loading...</h1>
+      <p class="group-desc" id="group-desc"></p>
+      <div class="group-stats">
+        <div class="group-stat">
+          <div class="group-stat-num" id="stat-members">0</div>
+          <div class="group-stat-label">Members</div>
+        </div>
+        <div class="group-stat">
+          <div class="group-stat-num" id="stat-posts">0</div>
+          <div class="group-stat-label">Posts</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="members-bar" id="members-bar">
+      <span class="members-bar-label">Members:</span>
+      <div class="members-avatars" id="members-avatars"></div>
+    </div>
+
+    <div id="content-area"></div>
+  </div>
+
+  <footer>
+    &copy; 2026 Bret Siers &nbsp;&middot;&nbsp; All Rights Reserved
+    &nbsp;&middot;&nbsp; <a href="privacy.html">Privacy Policy</a>
+  </footer>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="auth.js"></script>
+  <script>
+    const crewInfo = {
+      'Content Creators': { icon: '🎥', desc: 'Share videos, posts, and art inspired by the music. Show the crew what you\'re creating.' },
+      'Streamers': { icon: '🎙', desc: 'Share your streams, clips, and channel highlights. Connect with fellow streamers.' },
+      'Advantage': { icon: '⭐', desc: 'Early access, exclusive content, and behind-the-scenes looks. Share what you\'re excited about.' },
+      'Events': { icon: '🎪', desc: 'Plan events, share meetups, and post about listening parties. Let\'s get together.' },
+      'Teachers': { icon: '📚', desc: 'Share tutorials, tips, and educational content about AI music and creative tools.' },
+      'Jobs': { icon: '💼', desc: 'Post opportunities, share your work, and find collaborators in music and tech.' }
+    };
+
+    const params = new URLSearchParams(window.location.search);
+    const crewName = params.get('crew');
+
+    if (!crewName || !crewInfo[crewName]) {
+      window.location.href = 'crew.html';
+    }
+
+    const info = crewInfo[crewName];
+    document.title = crewName + ' — Bret Siers Music';
+    document.getElementById('group-icon').textContent = info.icon;
+    document.getElementById('group-name').textContent = crewName;
+    document.getElementById('group-desc').textContent = info.desc;
+
+    let currentProfile = null;
+
+    AUTH.onReady(async (user, profile) => {
+      currentProfile = profile;
+      if (user) {
+        document.getElementById('logout-btn').style.display = '';
+      }
+      await loadPage();
+    });
+
+    async function loadPage() {
+      // Load members
+      const members = await getCrewMembers(crewName);
+      document.getElementById('stat-members').textContent = members.length;
+
+      // Show member avatars
+      const avatarsEl = document.getElementById('members-avatars');
+      const shown = members.slice(0, 8);
+      avatarsEl.innerHTML = shown.map(m => {
+        const initials = m.displayName.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+        return '<div class="member-mini-avatar" title="' + escapeHtml(m.displayName) + '">' + initials + '</div>';
+      }).join('');
+      if (members.length > 8) {
+        avatarsEl.innerHTML += '<span class="members-more">+' + (members.length - 8) + ' more</span>';
+      }
+
+      // Load posts
+      const posts = await getGroupPosts();
+      document.getElementById('stat-posts').textContent = posts.length;
+
+      const contentArea = document.getElementById('content-area');
+      const isMember = currentProfile && currentProfile.crew === crewName;
+
+      if (!auth.currentUser) {
+        contentArea.innerHTML = '<div class="join-prompt"><p>Sign in to see and post in this crew</p><a class="join-prompt-btn" href="login.html">Login / Sign Up</a></div>';
+        renderPosts(posts, contentArea, false);
+        return;
+      }
+
+      if (!isMember) {
+        contentArea.innerHTML = '<div class="join-prompt"><p>Join ' + escapeHtml(crewName) + ' to post here</p><button class="join-prompt-btn" onclick="joinThisCrew()">Join ' + escapeHtml(crewName) + '</button></div>';
+        renderPosts(posts, contentArea, false);
+        return;
+      }
+
+      // Show compose box + posts
+      const initials = currentProfile.displayName.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+      let html = '<div class="compose-box">';
+      html += '<div class="compose-top">';
+      html += '<div class="compose-avatar">' + initials + '</div>';
+      html += '<textarea class="compose-input" id="compose-input" placeholder="Share something with ' + escapeHtml(crewName) + '... (paste a YouTube or link to embed it)" maxlength="1000" oninput="updateCharCount()"></textarea>';
+      html += '</div>';
+      html += '<div class="compose-bottom">';
+      html += '<span class="compose-hint">Paste a YouTube link to embed a video</span>';
+      html += '<div class="compose-actions"><span class="char-count" id="char-count">1000</span>';
+      html += '<button class="post-btn" id="post-btn" onclick="createGroupPost()" disabled>Post</button></div>';
+      html += '</div></div>';
+      html += '<div id="posts-list"></div>';
+      contentArea.innerHTML = html;
+
+      renderPosts(posts, document.getElementById('posts-list'), true);
+    }
+
+    async function getGroupPosts() {
+      try {
+        const snapshot = await db.collection('crew-posts')
+          .where('crew', '==', crewName)
+          .orderBy('timestamp', 'desc')
+          .limit(50).get();
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      } catch (e) {
+        console.log('Load posts error:', e);
+        return [];
+      }
+    }
+
+    function renderPosts(posts, container, canInteract) {
+      if (posts.length === 0) {
+        container.innerHTML += '<div class="empty-feed"><div class="emoji">🚀</div><p>No posts yet.<br>Be the first to share something!</p></div>';
+        return;
+      }
+
+      const uid = auth.currentUser ? auth.currentUser.uid : null;
+      let html = '';
+
+      posts.forEach(post => {
+        const initials = post.displayName ? post.displayName.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) : '?';
+        const likes = post.likes || [];
+        const isLiked = uid && likes.includes(uid);
+        const isOwner = uid && post.uid === uid;
+
+        let embedHtml = '';
+        const ytMatch = post.content.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/);
+        if (ytMatch) {
+          embedHtml = '<div class="post-embed"><iframe src="https://www.youtube.com/embed/' + ytMatch[1] + '" allowfullscreen></iframe></div>';
+        }
+
+        const urlMatch = post.content.match(/(https?:\/\/[^\s]+)/g);
+        if (!ytMatch && urlMatch) {
+          embedHtml = urlMatch.map(url =>
+            '<div class="post-embed"><a class="post-embed-link" href="' + escapeHtml(url) + '" target="_blank">🔗 ' + escapeHtml(url) + '</a></div>'
+          ).join('');
+        }
+
+        html += '<div class="post">';
+        html += '<div class="post-header">';
+        html += '<div class="post-avatar">' + initials + '</div>';
+        html += '<div class="post-author-info">';
+        html += '<span class="post-author">' + escapeHtml(post.displayName || '') + '</span>';
+        html += '<div class="post-meta">@' + escapeHtml(post.username || '') + ' &middot; ' + timeAgo(post.timestamp) + '</div>';
+        html += '</div></div>';
+        html += '<div class="post-content">' + escapeHtml(post.content) + '</div>';
+        html += embedHtml;
+
+        if (canInteract) {
+          html += '<div class="post-actions">';
+          html += '<button class="post-action ' + (isLiked ? 'liked' : '') + '" onclick="likeGroupPost(\'' + post.id + '\')">';
+          html += (isLiked ? '&#9829;' : '&#9825;') + ' ' + likes.length + '</button>';
+          if (isOwner) {
+            html += '<button class="post-action delete-btn" onclick="deleteGroupPost(\'' + post.id + '\')">&#128465; Delete</button>';
+          }
+          html += '</div>';
+        }
+
+        html += '</div>';
+      });
+
+      container.innerHTML += html;
+    }
+
+    function updateCharCount() {
+      const input = document.getElementById('compose-input');
+      const count = 1000 - input.value.length;
+      const el = document.getElementById('char-count');
+      el.textContent = count;
+      el.classList.toggle('warn', count < 100);
+      document.getElementById('post-btn').disabled = input.value.trim().length === 0;
+    }
+
+    async function createGroupPost() {
+      const input = document.getElementById('compose-input');
+      const content = input.value.trim();
+      if (!content || !currentProfile) return;
+
+      const btn = document.getElementById('post-btn');
+      btn.disabled = true;
+
+      try {
+        await db.collection('crew-posts').add({
+          crew: crewName,
+          uid: auth.currentUser.uid,
+          username: currentProfile.username,
+          displayName: currentProfile.displayName,
+          content: content,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+          likes: []
+        });
+        input.value = '';
+        updateCharCount();
+        await loadPage();
+      } catch (e) {
+        alert('Could not post. Please try again.');
+        btn.disabled = false;
+      }
+    }
+
+    async function likeGroupPost(postId) {
+      if (!auth.currentUser) return;
+      const ref = db.collection('crew-posts').doc(postId);
+      const doc = await ref.get();
+      if (!doc.exists) return;
+      const likes = doc.data().likes || [];
+      if (likes.includes(auth.currentUser.uid)) {
+        await ref.update({ likes: firebase.firestore.FieldValue.arrayRemove(auth.currentUser.uid) });
+      } else {
+        await ref.update({ likes: firebase.firestore.FieldValue.arrayUnion(auth.currentUser.uid) });
+      }
+      await loadPage();
+    }
+
+    async function deleteGroupPost(postId) {
+      if (!auth.currentUser) return;
+      const ref = db.collection('crew-posts').doc(postId);
+      const doc = await ref.get();
+      if (doc.exists && doc.data().uid === auth.currentUser.uid) {
+        await ref.delete();
+        await loadPage();
+      }
+    }
+
+    async function joinThisCrew() {
+      if (!auth.currentUser) { window.location.href = 'login.html'; return; }
+      await AUTH.updateProfile({ crew: crewName });
+      currentProfile.crew = crewName;
+      await loadPage();
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function timeAgo(timestamp) {
+      if (!timestamp) return 'just now';
+      const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+      const now = new Date();
+      const seconds = Math.floor((now - date) / 1000);
+      if (seconds < 60) return 'just now';
+      const minutes = Math.floor(seconds / 60);
+      if (minutes < 60) return minutes + 'm ago';
+      const hours = Math.floor(minutes / 60);
+      if (hours < 24) return hours + 'h ago';
+      const days = Math.floor(hours / 24);
+      if (days < 30) return days + 'd ago';
+      return date.toLocaleDateString();
+    }
+  </script>
+
+  <!-- STARFIELD -->
+  <script>
+    (function() {
+      const canvas = document.getElementById("starfield-canvas");
+      const ctx = canvas.getContext("2d");
+      let width, height, stars;
+      const STAR_COUNT = 300, SPEED = 0.35;
+      function init() { width=canvas.width=window.innerWidth; height=canvas.height=window.innerHeight; stars=[]; for(let i=0;i<STAR_COUNT;i++) stars.push(createStar(true)); }
+      function createStar(rz) { return { x:(Math.random()-0.5)*width*2, y:(Math.random()-0.5)*height*2, z:rz?Math.random()*1000:1000, size:Math.random()*1.5+0.5, twinkle:Math.random()*Math.PI*2, twinkleSpeed:Math.random()*0.02+0.005, color:Math.random()>0.85?`hsl(${Math.floor(Math.random()*60+200)},60%,80%)`:"#fff" }; }
+      function animate() { ctx.fillStyle="rgba(2,8,16,0.85)"; ctx.fillRect(0,0,width,height); const cx=width/2,cy=height/2; for(let i=0;i<stars.length;i++){const s=stars[i];s.z-=SPEED;s.twinkle+=s.twinkleSpeed;if(s.z<=0){stars[i]=createStar(false);continue;}const sx=(s.x/s.z)*200+cx,sy=(s.y/s.z)*200+cy;if(sx<-50||sx>width+50||sy<-50||sy>height+50){stars[i]=createStar(false);continue;}const scale=(1000-s.z)/1000,r=s.size*scale*2,alpha=scale*(0.6+0.4*Math.sin(s.twinkle));ctx.beginPath();ctx.arc(sx,sy,Math.max(r,0.3),0,Math.PI*2);ctx.fillStyle=s.color;ctx.globalAlpha=alpha;ctx.fill();if(r>1.2){ctx.beginPath();ctx.arc(sx,sy,r*2.5,0,Math.PI*2);ctx.globalAlpha=alpha*0.1;ctx.fill();}} ctx.globalAlpha=1;requestAnimationFrame(animate); }
+      init(); animate();
+      window.addEventListener("resize",()=>{width=canvas.width=window.innerWidth;height=canvas.height=window.innerHeight;});
+    })();
+  </script>
+</body>
+</html>
