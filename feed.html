@@ -366,8 +366,12 @@
         return;
       }
       if (profile) {
-        const initials = profile.displayName.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
-        document.getElementById("compose-avatar").textContent = initials;
+        const avatarEl = document.getElementById("compose-avatar");
+        if (profile.avatarUrl) {
+          avatarEl.innerHTML = '<img src="' + profile.avatarUrl + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+        } else {
+          avatarEl.textContent = profile.displayName.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
+        }
       }
       renderFeed();
     });
@@ -391,6 +395,16 @@
       await renderFeed();
     }
 
+    const userCache = {};
+
+    async function getAvatarHtml(uid, displayName, size) {
+      if (!uid) return renderAvatar({ displayName: displayName }, size);
+      if (!userCache[uid]) {
+        userCache[uid] = await getUserProfile(uid);
+      }
+      return renderAvatar(userCache[uid] || { displayName: displayName }, size);
+    }
+
     async function renderFeed() {
       const posts = await FEED.getPosts();
       const container = document.getElementById("feed-posts");
@@ -401,8 +415,17 @@
         return;
       }
 
+      // Pre-load all user profiles
+      const uids = [...new Set(posts.map(p => p.uid).filter(Boolean))];
+      await Promise.all(uids.map(async id => {
+        if (!userCache[id]) userCache[id] = await getUserProfile(id);
+      }));
+
       container.innerHTML = posts.map(post => {
-        const initials = post.displayName ? post.displayName.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2) : "?";
+        const userProf = userCache[post.uid];
+        const avatarHtml = (userProf && userProf.avatarUrl)
+          ? '<img src="' + userProf.avatarUrl + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">'
+          : (post.displayName ? post.displayName.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2) : "?");
         const likes = post.likes || [];
         const isLiked = uid && likes.includes(uid);
         const isOwner = uid && post.uid === uid;
@@ -425,7 +448,7 @@
 
         return `<div class="post">
           <div class="post-header">
-            <div class="post-avatar">${initials}</div>
+            <div class="post-avatar">${avatarHtml}</div>
             <div class="post-author-info">
               <span class="post-author">${escapeHtml(post.displayName || '')}</span>
               ${post.crew ? `<span class="post-crew-tag">${escapeHtml(post.crew)}</span>` : ""}

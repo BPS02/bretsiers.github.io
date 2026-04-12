@@ -156,6 +156,23 @@ const FEED = {
   }
 };
 
+// Helper to render an avatar (image or initials)
+function renderAvatar(user, size) {
+  const s = size || 36;
+  if (user && user.avatarUrl) {
+    return '<img src="' + user.avatarUrl + '" style="width:' + s + 'px;height:' + s + 'px;border-radius:50%;object-fit:cover;border:2px solid #c0a060;" alt="">';
+  }
+  const name = (user && user.displayName) || '?';
+  const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+  return initials;
+}
+
+// Helper to get a user's profile by uid
+async function getUserProfile(uid) {
+  const doc = await db.collection("users").doc(uid).get();
+  return doc.exists ? doc.data() : null;
+}
+
 // Helper to get all crew members
 async function getCrewMembers(crewName) {
   const snapshot = await db.collection("users").where("crew", "==", crewName).get();
